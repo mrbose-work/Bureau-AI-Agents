@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bureau — v4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--ob0:#0A0A10;--ob1:#13131A;--ob2:#1A1A24;--ob3:#22222E;--ob4:#2C2C3A;--ob5:#3A3A4A;
+--g0:#FFD700;--g1:#FFC400;--g2:#E6B800;--g3:rgba(255,215,0,0.18);--g4:rgba(255,215,0,0.08);--g5:rgba(255,215,0,0.04);
+--glow:0 0 20px rgba(255,215,0,0.25),0 0 40px rgba(255,215,0,0.12);
+--glow-sm:0 0 12px rgba(255,215,0,0.2);
+--red:#FF4B4B;--red-bg:rgba(255,75,75,0.08);
+--green:#00D26A;--green-bg:rgba(0,210,106,0.08);
+--amber:#FFB800;--amber-bg:rgba(255,184,0,0.08);
+--blue:#4C9AFF;--blue-bg:rgba(76,154,255,0.08);
+--tw:#F4F1E8;--ts:#A09F9B;--td:#5A5960;
+--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
+--sidebar:72px;--radius:14px;--radius-sm:8px;
+--border:1px solid rgba(255,215,0,0.12);--border-dim:1px solid rgba(255,255,255,0.05);
+}
+html,body{height:100%;overflow:hidden;background:var(--ob0);color:var(--tw);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased}
+.lrbg{position:fixed;top:0;left:0;right:0;height:260px;z-index:0;pointer-events:none;overflow:hidden}
+.lrbg::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:conic-gradient(from 260deg at 50% 0%,transparent 30deg,rgba(255,215,0,0.05) 60deg,rgba(255,215,0,0.1) 90deg,rgba(255,215,0,0.05) 120deg,transparent 150deg);animation:rr 8s ease-in-out infinite alternate;filter:blur(10px)}
+.lrbg::after{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:400px;height:300px;background:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,0.07) 0%,rgba(255,215,0,0.03) 40%,transparent 70%);animation:rp 4s ease-in-out infinite}
+@keyframes rr{0%{transform:translateX(-50%) rotate(-8deg)}100%{transform:translateX(-50%) rotate(8deg)}}
+@keyframes rp{0%,100%{opacity:0.5}50%{opacity:1}}
+.app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1}
+.topbar{display:flex;align-items:center;padding:0 20px;height:56px;background:rgba(19,19,26,0.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,215,0,0.1);flex-shrink:0;position:relative;z-index:20;gap:10px}
+.tbar-line{position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,0.7) 30%,rgba(255,215,0,1) 50%,rgba(255,215,0,0.7) 70%,transparent);animation:lf 3s ease-in-out infinite}
+@keyframes lf{0%,100%{opacity:0.4}50%{opacity:1}}
+.brand{font-family:var(--serif);font-size:15px;color:var(--g0);letter-spacing:2px;font-weight:700;flex-shrink:0;text-shadow:var(--glow-sm);min-width:130px}
+.spill{flex:1;max-width:260px;background:var(--ob2);border:var(--border);border-radius:20px;padding:7px 14px;color:var(--td);font-size:12px;display:flex;align-items:center;gap:8px}
+.wchip{display:flex;align-items:center;gap:5px;padding:5px 11px;background:var(--ob2);border:var(--border);border-radius:20px;flex-shrink:0}
+.wchip span{font-size:11px;color:var(--ts)}.wchip .tmp{color:var(--g0);font-weight:600;font-size:12px}
+.mswitch{display:flex;align-items:center;background:var(--ob2);border:var(--border);border-radius:20px;padding:3px;gap:2px;flex-shrink:0}
+.mbtn{padding:4px 11px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all 0.25s;color:var(--ts);background:none}
+.mbtn.on{background:var(--g0);color:var(--ob0);box-shadow:var(--glow-sm)}
+.rb{width:33px;height:33px;border-radius:50%;background:var(--ob3);border:1.5px solid var(--g0);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:10px;color:var(--g0);cursor:pointer;position:relative;flex-shrink:0;box-shadow:var(--glow-sm)}
+.rdot{position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--red);border:2px solid var(--ob1);animation:pr 2s infinite}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(255,75,75,0.4)}50%{box-shadow:0 0 0 4px rgba(255,75,75,0)}}
+.main{display:flex;flex:1;overflow:hidden}
+.sidebar{width:var(--sidebar);background:rgba(19,19,26,0.97);border-right:1px solid rgba(255,215,0,0.07);display:flex;flex-direction:column;align-items:center;padding:14px 0 10px;gap:2px;flex-shrink:0;position:relative}
+.sbar-line{position:absolute;right:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(255,215,0,0.5) 30%,rgba(255,215,0,0.8) 50%,rgba(255,215,0,0.5) 70%,transparent);animation:slf 4s ease-in-out infinite}
+@keyframes slf{0%,100%{opacity:0.25}50%{opacity:1}}
+.nav{width:46px;height:50px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all 0.2s;gap:3px}
+.nicon{font-size:18px;filter:grayscale(1) brightness(0.32);transition:all 0.2s}
+.nlbl{font-size:8px;color:var(--td);letter-spacing:0.3px;transition:all 0.2s;font-weight:500;text-transform:uppercase}
+.nav:hover .nicon{filter:grayscale(0.3) brightness(0.7)}.nav:hover .nlbl{color:var(--ts)}
+.nav.on{background:var(--g4)}.nav.on .nicon{filter:none}.nav.on .nlbl{color:var(--g0)}
+.nav.on::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:18px;height:2.5px;background:var(--g0);border-radius:2px;box-shadow:0 0 8px rgba(255,215,0,0.7)}
+.ntip{position:absolute;left:56px;top:50%;transform:translateY(-50%);background:var(--ob3);color:var(--tw);font-size:11px;padding:4px 10px;border-radius:6px;white-space:nowrap;border:var(--border);pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:300}
+.nav:hover .ntip{opacity:1}
+.ndiv{width:30px;height:1px;background:rgba(255,215,0,0.1);margin:3px 0}
+.nsp{flex:1}
+.content{flex:1;overflow-y:auto;padding:22px 26px;background:transparent}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--ob4);border-radius:2px}
+.screen{display:none}.screen.on{display:block}
+.stitle{font-family:var(--serif);font-size:26px;color:var(--g0);font-weight:600;text-shadow:0 0 24px rgba(255,215,0,0.2)}
+.slbl{font-size:10px;color:var(--td);text-transform:uppercase;letter-spacing:1.2px;margin:18px 0 9px;font-weight:600}
+.ecard{position:relative;border-radius:var(--radius);overflow:hidden;transition:all 0.3s;cursor:pointer}
+.ecard::before{content:'';position:absolute;inset:0;border-radius:var(--radius);padding:1px;background:linear-gradient(135deg,rgba(255,215,0,0.35),rgba(255,215,0,0.04),rgba(255,215,0,0.35));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:bb 3s ease-in-out infinite;pointer-events:none}
+.ecard:hover::before{animation:be 0.6s ease-in-out infinite}
+@keyframes bb{0%,100%{opacity:0.35}50%{opacity:1}}
+@keyframes be{0%,100%{opacity:0.6}50%{opacity:1;filter:blur(0.5px)}}
+.ecard-in{background:rgba(26,26,36,0.78);backdrop-filter:blur(20px);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:all 0.3s}
+.ecard-in::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,215,0,0.05) 0%,transparent 60%);pointer-events:none}
+.ecard:hover{transform:translateY(-2px);filter:drop-shadow(0 8px 24px rgba(255,215,0,0.1))}
+.urg::before{background:linear-gradient(135deg,rgba(255,75,75,0.5),rgba(255,75,75,0.08),rgba(255,75,75,0.5));animation:up 1.5s ease-in-out infinite}
+@keyframes up{0%,100%{opacity:0.4}50%{opacity:1}}
+.urg .ecard-in{background:rgba(255,75,75,0.06)}
+.gcard{background:rgba(26,26,36,0.72);backdrop-filter:blur(20px);border:1px solid rgba(255,215,0,0.13);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:all 0.2s}
+.gcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,215,0,0.04) 0%,transparent 60%);pointer-events:none}
+.gcard:hover{border-color:rgba(255,215,0,0.28);box-shadow:0 0 20px rgba(255,215,0,0.07);transform:translateY(-1px)}
+.bento{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.bw{grid-column:span 2}.bfw{grid-column:span 3}
+.sc{background:rgba(26,26,36,0.72);backdrop-filter:blur(20px);border:1px solid rgba(255,215,0,0.12);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,215,0,0.05) 0%,transparent 60%);pointer-events:none}
+.sc:hover{border-color:rgba(255,215,0,0.3);box-shadow:var(--glow-sm);transform:translateY(-2px)}
+.slabel{font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;font-weight:500}
+.snum{font-family:var(--serif);font-size:29px;color:var(--g0);font-weight:600;line-height:1;text-shadow:0 0 20px rgba(255,215,0,0.2)}
+.ssub{font-size:11px;color:var(--ts);margin-top:5px}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.bp1{background:rgba(255,75,75,0.12);color:var(--red);border:1px solid rgba(255,75,75,0.25)}
+.bp2{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(255,184,0,0.25)}
+.bp3{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,210,106,0.25)}
+.bgold{background:var(--g4);color:var(--g0);border:1px solid rgba(255,215,0,0.25)}
+.bgrey{background:rgba(160,159,155,0.1);color:var(--ts);border:1px solid rgba(160,159,155,0.2)}
+.bgreen{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,210,106,0.25)}
+.bred{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,75,75,0.25)}
+.bamber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(255,184,0,0.25)}
+.bblue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(76,154,255,0.25)}
+.pb{background:rgba(255,255,255,0.06);border-radius:4px;height:3px;overflow:hidden;margin-top:8px}
+.pbi{height:3px;background:linear-gradient(90deg,var(--g2),var(--g0));border-radius:4px}
+.pbi-g{background:linear-gradient(90deg,#00A855,var(--green))}
+.pbi-r{background:linear-gradient(90deg,#C0392B,var(--red))}
+.pbi-b{background:linear-gradient(90deg,#1a6fcc,var(--blue))}
+.mc{display:flex;align-items:flex-end;gap:3px;height:36px;margin-top:10px}
+.mb{flex:1;border-radius:2px 2px 0 0;background:rgba(255,215,0,0.18)}
+.mb.hi{background:rgba(255,215,0,0.52)}.mb.top{background:var(--g0);box-shadow:0 0 6px rgba(255,215,0,0.4)}
+.spark{display:flex;align-items:flex-end;gap:2px;height:24px;margin-top:6px}
+.sb{flex:1;border-radius:1px 1px 0 0;min-height:3px}
+.briefing{position:relative;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.22);border-radius:var(--radius);padding:20px;margin-bottom:13px;overflow:hidden}
+.briefing::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,0.8) 30%,rgba(255,215,0,1) 50%,rgba(255,215,0,0.8) 70%,transparent);animation:lf 2.5s ease-in-out infinite}
+.bby{font-size:10px;color:var(--g0);letter-spacing:1.5px;margin-bottom:8px;font-weight:700;text-transform:uppercase}
+.btxt{font-family:var(--serif);font-style:italic;font-size:13px;color:rgba(255,215,0,0.88);line-height:1.8;min-height:20px}
+.rpbtn{margin-top:11px;background:none;border:1px solid rgba(255,215,0,0.18);border-radius:20px;color:var(--ts);font-size:11px;padding:4px 12px;cursor:pointer;transition:all 0.15s}
+.rpbtn:hover{border-color:var(--g0);color:var(--g0)}
+.fcard{background:rgba(255,215,0,0.04);border-left:2.5px solid var(--g0);border-top:1px solid rgba(255,215,0,0.12);border-right:1px solid rgba(255,215,0,0.12);border-bottom:1px solid rgba(255,215,0,0.12);border-radius:var(--radius);padding:13px 16px;margin-bottom:13px}
+.flbl{font-size:10px;color:var(--td);letter-spacing:0.8px;margin-bottom:5px;text-transform:uppercase;font-weight:600}
+.ftxt{font-family:var(--serif);font-style:italic;font-size:12.5px;color:rgba(255,215,0,0.8);line-height:1.7}
+.qa{display:flex;gap:7px;margin-bottom:13px;flex-wrap:wrap}
+.qab{display:flex;align-items:center;gap:5px;padding:7px 13px;background:var(--ob2);border:1px solid rgba(255,215,0,0.14);border-radius:20px;font-size:11px;font-weight:500;color:var(--g0);cursor:pointer;transition:all 0.15s;flex-shrink:0}
+.qab:hover{background:var(--g4);border-color:rgba(255,215,0,0.35);box-shadow:var(--glow-sm)}
+.hring{width:68px;height:68px;border-radius:50%;background:conic-gradient(var(--g0) 0% 78%,rgba(255,255,255,0.06) 78%);display:flex;align-items:center;justify-content:center;margin:6px auto 7px;position:relative}
+.hring::before{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--ob2)}
+.hnum{position:relative;font-family:var(--serif);font-size:17px;color:var(--g0);font-weight:700}
+.ctick{font-family:var(--serif);font-size:22px;color:var(--green);font-weight:600}
+.ctx{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 13px;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.1);border-radius:var(--radius-sm)}
+.ctx span{font-family:var(--serif);font-style:italic;font-size:12px;color:rgba(255,215,0,0.7);line-height:1.5}
+.cdot{width:6px;height:6px;border-radius:50%;background:var(--g0);flex-shrink:0;animation:cp 2s infinite}
+@keyframes cp{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+.frow{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:3px}
+.frow::-webkit-scrollbar{display:none}
+.fc{padding:6px 13px;border-radius:20px;font-size:11px;border:1px solid var(--ob4);color:var(--ts);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;font-weight:500}
+.fc:hover{border-color:rgba(255,215,0,0.3);color:var(--g0)}
+.fc.on{border-color:var(--g0);color:var(--g0);background:var(--g4);box-shadow:0 0 10px rgba(255,215,0,0.1)}
+.imsg{background:rgba(26,26,36,0.65);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.05);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.imsg::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:transparent;transition:all 0.2s}
+.imsg:hover{border-color:rgba(255,215,0,0.2);box-shadow:0 0 14px rgba(255,215,0,0.06)}
+.imsg:hover::before{background:var(--g0)}
+.imsg.urg{border-color:rgba(255,75,75,0.3);background:rgba(255,75,75,0.04)}.imsg.urg::before{background:var(--red)}
+.pi{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.pg{background:rgba(234,67,53,0.15);color:#EA4335}.pw{background:rgba(37,211,102,0.15);color:#25D366}
+.pli{background:rgba(0,119,181,0.15);color:#0077B5}.pin{background:rgba(193,53,132,0.15);color:#C13584}
+.pf{background:rgba(24,119,242,0.15);color:#1877F2}
+.iname{font-size:13px;font-weight:600;color:var(--g0);margin-bottom:2px}
+.isub{font-size:10px;color:var(--td);margin-bottom:7px}
+.ibody{font-size:12.5px;color:var(--tw);line-height:1.6;margin-bottom:10px}
+.iact{display:flex;gap:7px;flex-wrap:wrap}
+hr.dm{border:none;border-top:1px solid rgba(255,255,255,0.04);margin:2px 0}
+.kboard{display:flex;gap:11px;overflow-x:auto;padding-bottom:8px}
+.kboard::-webkit-scrollbar{height:3px}.kboard::-webkit-scrollbar-thumb{background:var(--ob4);border-radius:2px}
+.kcol{min-width:180px;flex-shrink:0}
+.kch{font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.kc{background:rgba(26,26,36,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:13px;margin-bottom:8px;cursor:pointer;transition:all 0.2s}
+.kc:hover{border-color:rgba(255,215,0,0.3);box-shadow:0 0 12px rgba(255,215,0,0.07);transform:translateY(-1px)}
+.kcc{font-size:10px;color:var(--g0);margin-bottom:3px;font-weight:600}
+.kcn{font-size:12px;color:var(--tw);font-weight:500;margin-bottom:8px}
+.ke{height:62px;border:1px dashed rgba(255,255,255,0.07);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.tlayout{display:grid;grid-template-columns:60% 40%;gap:13px}
+.tan{background:rgba(26,26,36,0.7);border:1px solid rgba(255,215,0,0.12);border-radius:var(--radius);padding:15px}
+.trow{display:flex;align-items:center;gap:10px;padding:9px 7px;border-radius:8px;cursor:pointer;transition:background 0.12s}
+.trow:hover{background:var(--ob2)}
+.tck{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--ob5);flex-shrink:0;transition:all 0.12s}
+.trow.ov .tck{border-color:var(--red)}.trow.ov{color:rgba(255,100,100,0.9)}
+.trow.dn .tck{background:var(--green);border-color:var(--green);display:flex;align-items:center;justify-content:center;color:var(--ob0);font-size:9px;font-weight:700}
+.trow.dn span{text-decoration:line-through;color:var(--td)}
+.crow{display:flex;align-items:center;gap:12px;padding:13px 8px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:all 0.15s}
+.crow:hover{background:var(--ob2);border-color:rgba(255,215,0,0.14);transform:translateX(2px)}
+.cav{width:40px;height:40px;border-radius:50%;background:rgba(255,215,0,0.1);border:1.5px solid rgba(255,215,0,0.25);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;color:var(--g0);flex-shrink:0;font-weight:600}
+.hd{width:8px;height:8px;border-radius:50%}
+.con{background:var(--green);box-shadow:0 0 5px rgba(0,210,106,0.5)}.coff{background:var(--ob5)}
+.fbars{display:flex;gap:4px;align-items:flex-end;height:64px;margin:10px 0}
+.fb{border-radius:4px 4px 0 0;flex:1}
+.fb.inc{background:linear-gradient(180deg,var(--g0),var(--g2))}.fb.exp{background:var(--ob4)}
+.ivrow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.ivrow:last-child{border-bottom:none}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:var(--border-dim)}
+.srow:last-child{border-bottom:none}
+.tog{width:36px;height:20px;border-radius:10px;background:var(--ob5);position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0}
+.tog.on{background:var(--g0)}.tog::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--ob1);transition:left 0.2s}
+.tog.on::after{left:18px}
+.tcard{background:rgba(26,26,36,0.72);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:14px;margin-bottom:8px;transition:all 0.18s}
+.tcard:hover{border-color:rgba(255,215,0,0.2)}
+.ttag{font-size:9px;color:var(--g0);background:var(--g4);border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:7px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+.bg{background:var(--g4);border:1px solid rgba(255,215,0,0.3);color:var(--g0);padding:7px 13px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;font-family:var(--sans);font-weight:500;transition:all 0.15s}
+.bg:hover{background:var(--g3);box-shadow:var(--glow-sm)}
+.bgsm{padding:5px 10px;font-size:11px}
+.bgh{background:none;border:1px solid var(--ob4);color:var(--ts);padding:7px 13px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;font-family:var(--sans);font-weight:500;transition:all 0.15s}
+.bgh:hover{border-color:rgba(255,215,0,0.2);color:var(--tw)}
+.bellbtn{position:fixed;bottom:24px;right:24px;width:52px;height:58px;cursor:pointer;z-index:150;transition:all 0.3s}
+.bellsvg{width:100%;height:100%;filter:drop-shadow(0 0 8px rgba(255,215,0,0.3));animation:bp 3s ease-in-out infinite}
+@keyframes bp{0%,100%{filter:drop-shadow(0 0 8px rgba(255,215,0,0.3));transform:scale(1)}50%{filter:drop-shadow(0 0 16px rgba(255,215,0,0.55));transform:scale(1.04)}}
+.bellbtn:hover .bellsvg{animation:br 0.4s ease-in-out;filter:drop-shadow(0 0 20px rgba(255,215,0,0.8))}
+@keyframes br{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(8deg)}}
+.bnot{position:absolute;top:4px;right:4px;width:10px;height:10px;border-radius:50%;background:var(--red);border:2px solid var(--ob0);animation:pr 2s infinite}
+.cbg{position:fixed;inset:0;background:rgba(6,6,10,0.75);z-index:200;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+.cbg.open{display:flex}
+.cpanel{background:rgba(19,19,26,0.97);border:1px solid rgba(255,215,0,0.2);border-bottom:none;border-radius:18px 18px 0 0;width:100%;max-width:620px;max-height:62vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,0.6),0 -1px 0 rgba(255,215,0,0.25);position:relative;overflow:hidden;transition:max-height 0.3s ease}
+.cpanel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,0.8) 30%,rgba(255,215,0,1) 50%,rgba(255,215,0,0.8) 70%,transparent);animation:lf 2s ease-in-out infinite}
+.cbg.fs .cpanel{max-height:90vh;border-radius:16px 16px 0 0}
+.chead{padding:15px 20px 12px;border-bottom:1px solid rgba(255,215,0,0.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.cmsgs{flex:1;overflow-y:auto;padding:13px 20px;display:flex;flex-direction:column;gap:10px}
+.cmsgs::-webkit-scrollbar{width:2px}.cmsgs::-webkit-scrollbar-thumb{background:var(--ob5)}
+.mb_{align-self:flex-start;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.18);border-radius:0 13px 13px 13px;padding:11px 14px;max-width:84%;font-family:var(--serif);font-style:italic;color:rgba(255,215,0,0.9);font-size:12.5px;line-height:1.7}
+.mu_{align-self:flex-end;background:var(--ob3);border:1px solid rgba(255,255,255,0.07);border-radius:13px 0 13px 13px;padding:11px 14px;max-width:84%;font-size:12.5px;color:var(--tw)}
+.tdots{align-self:flex-start;display:flex;gap:4px;padding:11px 14px;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.18);border-radius:0 13px 13px 13px}
+.td{width:6px;height:6px;border-radius:50%;background:rgba(255,215,0,0.6);animation:tb 1.2s infinite}
+.td:nth-child(2){animation-delay:0.2s}.td:nth-child(3){animation-delay:0.4s}
+@keyframes tb{0%,100%{transform:translateY(0);opacity:0.4}50%{transform:translateY(-6px);opacity:1}}
+.cchips{padding:8px 20px;display:flex;gap:7px;overflow-x:auto;flex-shrink:0}
+.cchips::-webkit-scrollbar{display:none}
+.cchip{background:var(--ob3);border:1px solid rgba(255,215,0,0.14);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--g0);font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.12s}
+.cchip:hover{background:var(--g4);border-color:rgba(255,215,0,0.3)}
+.cinrow{padding:11px 20px;border-top:1px solid rgba(255,215,0,0.1);display:flex;gap:9px;align-items:center;flex-shrink:0}
+.cinp{flex:1;background:var(--ob3);border:1px solid rgba(255,215,0,0.18);border-radius:22px;padding:9px 15px;color:var(--tw);font-family:var(--sans);font-size:13px;outline:none;transition:border-color 0.15s}
+.cinp:focus{border-color:var(--g0);box-shadow:0 0 0 3px rgba(255,215,0,0.08)}
+.sbtn{width:33px;height:33px;border-radius:50%;background:var(--g0);border:none;cursor:pointer;color:var(--ob0);font-size:14px;font-weight:700;flex-shrink:0;transition:all 0.15s}
+.sbtn:hover{background:var(--g1);box-shadow:var(--glow-sm)}
+.vbtn{width:33px;height:33px;border-radius:50%;background:var(--ob3);border:1px solid rgba(255,215,0,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all 0.15s;flex-shrink:0}
+.vbtn:hover{border-color:var(--g0);background:var(--g4)}
+.cx{background:none;border:1px solid var(--ob5);border-radius:6px;color:var(--ts);padding:4px 9px;cursor:pointer;font-size:11px;font-family:var(--sans);transition:all 0.12s}
+.cx:hover{border-color:rgba(255,215,0,0.3);color:var(--g0)}
+.exbtn{background:none;border:1px solid var(--ob5);border-radius:6px;color:var(--ts);padding:4px 9px;cursor:pointer;font-size:10px;font-family:var(--sans);transition:all 0.12s;margin-right:6px}
+.exbtn:hover{border-color:rgba(255,215,0,0.3);color:var(--g0)}
+.rc{background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,215,0,0.04),rgba(255,215,0,0.1));border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden}
+.rc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.08) 0%,transparent 50%,rgba(255,215,0,0.05) 100%);animation:sh 4s ease-in-out infinite}
+@keyframes sh{0%,100%{transform:translateX(-100%) rotate(30deg)}50%{transform:translateX(200%) rotate(30deg)}}
+.vtag{text-align:center;padding:14px;font-size:10px;color:var(--td);letter-spacing:1.5px;margin-top:8px}
+.acclbl{font-size:9px;color:var(--td);text-transform:uppercase;letter-spacing:1px;margin:10px 0 5px;font-weight:600}
+.accrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:var(--border-dim)}
+.accrow:last-child{border-bottom:none}
+.acico{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;margin-right:8px;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.cu{display:inline-block}
+.subrow{padding:10px 0;border-bottom:var(--border-dim);cursor:pointer;transition:all 0.15s}
+.subrow:last-child{border-bottom:none}
+.subrow:hover{padding-left:5px}
+</style>
+</head>
+<body>
+<div class="lrbg"></div>
+<div class="app">
+<div class="topbar">
+  <div class="brand" id="brand-txt"></div>
+  <div class="spill"><span>🔍</span><span>Search The Bureau...</span></div>
+  <div class="wchip"><span>⛅</span><span>Kolkata</span><span class="tmp">28°C</span></div>
+  <div class="mswitch">
+    <button class="mbtn on" id="mb-biz" onclick="setMode('biz')">My Business</button>
+    <button class="mbtn" id="mb-cli" onclick="setMode('cli')">Client Work</button>
+  </div>
+  <div class="rb" onclick="go('settings')">RB<div class="rdot"></div></div>
+  <div class="tbar-line"></div>
+</div>
+<div class="main">
+<div class="sidebar">
+  <div class="sbar-line"></div>
+  <div class="nav on" id="n-home" onclick="go('home')"><div class="nicon">🏠</div><div class="nlbl">Home</div><div class="ntip">Home</div></div>
+  <div class="nav" id="n-inbox" onclick="go('inbox')"><div class="nicon">📥</div><div class="nlbl">Inbox</div><div class="ntip">Inbox</div></div>
+  <div class="nav" id="n-work" onclick="go('work')"><div class="nicon">📁</div><div class="nlbl">Work</div><div class="ntip">Work</div></div>
+  <div class="ndiv"></div>
+  <div class="nav" id="n-clients" onclick="go('clients')"><div class="nicon">👥</div><div class="nlbl">Clients</div><div class="ntip">Clients</div></div>
+  <div class="nav" id="n-finance" onclick="go('finance')"><div class="nicon">💰</div><div class="nlbl">Finance</div><div class="ntip">Finance</div></div>
+  <div class="nav" id="n-growth" onclick="go('growth')"><div class="nicon">🚀</div><div class="nlbl">Growth</div><div class="ntip">Growth Hub</div></div>
+  <div class="nsp"></div>
+  <div class="nav" id="n-settings" onclick="go('settings')"><div class="nicon">⚙️</div><div class="nlbl">Settings</div><div class="ntip">Settings</div></div>
+</div>
+<div class="content">
+<!-- HOME -->
+<div class="screen on" id="s-home">
+<div class="briefing"><div class="bby">✦ BENJAMIN</div><div class="btxt" id="btxt"></div><button class="rpbtn">↺ Replay Briefing</button></div>
+<div class="fcard"><div class="flbl">Today's Focus</div><div class="ftxt">"Review Company A campaign assets — P1 · Due Friday"</div></div>
+<div class="qa">
+  <div class="qab"><span>✏️</span>New Task</div>
+  <div class="qab"><span>📄</span>New Invoice</div>
+  <div class="qab"><span>💬</span>New Message</div>
+  <div class="qab"><span>📅</span>New Meeting</div>
+  <div class="qab"><span>💸</span>Log Expense</div>
+</div>
+<div class="bento">
+  <div class="ecard bw" onclick="go('inbox')"><div class="ecard-in"><div class="slabel">Inbox Summary</div><div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="snum cu" data-t="7">0</div><div class="ssub">unread messages</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--red);margin-bottom:7px;font-weight:500">2 escalated 🔴</div><div style="display:flex;gap:5px;justify-content:flex-end"><div class="pi pg" style="width:21px;height:21px;font-size:9px;border-radius:5px">G</div><div class="pi pw" style="width:21px;height:21px;font-size:9px;border-radius:5px">W</div><div class="pi pli" style="width:21px;height:21px;font-size:9px;border-radius:5px">Li</div></div></div></div></div></div>
+  <div class="ecard" onclick="go('growth')"><div class="ecard-in"><div class="slabel">No-Way Health</div><div class="hring"><div class="hnum">78</div></div><div style="font-size:10px;color:var(--green);font-weight:500;text-align:center">Good standing</div></div></div>
+  <div class="ecard" onclick="go('finance')"><div class="ecard-in"><div class="slabel">Today's Revenue</div><div class="ctick">₹<span class="cu" data-t="45000">0</span></div><div style="font-size:11px;color:var(--ts);margin-top:3px">INV-003 received</div><div style="display:flex;align-items:center;gap:5px;margin-top:7px"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:cp 2s infinite"></div><span style="font-size:10px;color:var(--green)">Live</span></div></div></div>
+  <div class="ecard"><div class="ecard-in"><div class="slabel">Next Meeting</div><div style="font-family:var(--serif);font-size:21px;color:var(--g0);font-weight:600" id="cdwn">02:41:18</div><div style="font-size:11px;color:var(--ts);margin-top:3px">Company A Review · 3 PM</div><div style="font-size:10px;color:var(--ts);margin-top:3px">Google Meet</div></div></div>
+  <div class="ecard" onclick="go('work')"><div class="ecard-in"><div class="slabel">Active Projects</div><div class="snum cu" data-t="3">0</div><div style="display:flex;gap:5px;margin-top:9px"><span class="badge bp1">P1 ×1</span><span class="badge bp2">P2 ×1</span><span class="badge bp3">P3 ×1</span></div></div></div>
+  <div class="ecard" onclick="go('work')"><div class="ecard-in"><div class="slabel">Today's Tasks</div><div style="display:flex;justify-content:space-between"><div><div class="snum cu" data-t="5">0</div><div style="font-size:11px;color:var(--red);margin-top:4px;font-weight:500">2 overdue</div></div><div style="text-align:right;margin-top:4px"><div style="font-size:10px;color:var(--ts)">P1:2 · P2:2 · P3:1</div><div class="pb" style="width:90px;margin-top:6px"><div class="pbi" style="width:40%"></div></div><div style="font-size:9px;color:var(--ts);margin-top:3px">40% complete</div></div></div><div style="display:flex;gap:3px;margin-top:10px"><div style="flex:2;height:3px;background:var(--red);border-radius:2px"></div><div style="flex:2;height:3px;background:var(--amber);border-radius:2px"></div><div style="flex:1;height:3px;background:var(--green);border-radius:2px"></div></div></div></div>
+  <div class="ecard urg"><div class="ecard-in"><div class="slabel" style="color:var(--red)">Escalations 🔴</div><div style="font-family:var(--serif);font-size:29px;color:var(--red);font-weight:600">1</div><div style="font-size:11px;color:var(--ts);margin-top:5px">Company A — urgent</div><button class="bg bgsm" style="margin-top:9px;background:rgba(255,75,75,0.1);border-color:rgba(255,75,75,0.3);color:var(--red)">Handle Now</button></div></div>
+  <div class="ecard" onclick="go('finance')"><div class="ecard-in"><div class="slabel">Finance Snapshot</div><div style="font-family:var(--serif);font-size:24px;color:var(--g0);font-weight:600">₹1.2L</div><div style="font-size:11px;color:var(--ts);margin-top:3px">this month</div><div class="mc"><div class="mb" style="height:45%"></div><div class="mb" style="height:58%"></div><div class="mb" style="height:52%"></div><div class="mb hi" style="height:76%"></div><div class="mb hi" style="height:88%"></div><div class="mb" style="height:65%"></div><div class="mb top" style="height:100%"></div></div></div></div>
+  <div class="ecard"><div class="ecard-in"><div class="slabel">Pending Approvals</div><div class="snum cu" data-t="5">0</div><div style="margin-top:8px;display:flex;flex-direction:column;gap:4px"><div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--ts)">Content</span><span class="badge bamber" style="font-size:9px">3</span></div><div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--ts)">Invoices</span><span class="badge bamber" style="font-size:9px">1</span></div><div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--ts)">Butler</span><span class="badge bgold" style="font-size:9px">1</span></div></div></div></div>
+  <div class="ecard"><div class="ecard-in"><div class="slabel">Pipeline Value</div><div style="font-family:var(--serif);font-size:22px;color:var(--blue);font-weight:600">₹2.8L</div><div style="font-size:11px;color:var(--ts);margin-top:4px">2 prospects</div><div class="pb" style="margin-top:10px"><div class="pbi pbi-b" style="width:68%"></div></div><div style="font-size:10px;color:var(--ts);margin-top:3px">68% conv. probability</div></div></div>
+  <div class="ecard" onclick="go('growth')"><div class="ecard-in"><div class="slabel">Growth Tracker</div><div class="mc"><div class="mb" style="height:48%"></div><div class="mb" style="height:60%"></div><div class="mb" style="height:56%"></div><div class="mb hi" style="height:75%"></div><div class="mb hi" style="height:90%"></div><div class="mb" style="height:70%"></div><div class="mb top" style="height:100%"></div></div><div style="font-size:11px;color:var(--green);margin-top:8px;font-weight:500">↑ 23% this week</div></div></div>
+  <div class="ecard bw" style="border-color:rgba(255,215,0,0.2)"><div class="ecard-in" style="background:rgba(255,215,0,0.04)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:7px;height:7px;border-radius:50%;background:var(--g0);animation:cp 2s infinite"></div><span style="font-size:10px;color:var(--g0);font-weight:700;letter-spacing:1px;text-transform:uppercase">Benjamin's Insight</span></div><div style="font-family:var(--serif);font-style:italic;font-size:12.5px;color:rgba(255,215,0,0.82);line-height:1.7">"Pardon the observation, Mr. Bose — Company A has had no project updates in 3 days, yet their deadline is Friday. I venture to suggest we address this forthwith. Shall I draft a status update?"</div><div style="display:flex;gap:7px;margin-top:11px"><button class="bg bgsm">Yes, draft it</button><button class="bgh bgsm">Dismiss</button></div></div></div>
+</div>
+</div>
+<!-- INBOX -->
+<div class="screen" id="s-inbox">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+  <div class="stitle">Inbox</div>
+  <div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:var(--ts)">Auto-reply</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+</div>
+<div class="ctx"><div class="cdot"></div><span>"7 messages await your attention, Mr. Bose. 2 are most urgent — I have placed them at the head of your correspondence, as is proper."</span></div>
+<div class="frow"><div class="fc on">All <span style="background:rgba(255,215,0,0.18);border-radius:10px;padding:1px 6px;margin-left:3px;font-size:9px">7</span></div><div class="fc">Unread <span style="background:rgba(255,75,75,0.18);border-radius:10px;padding:1px 6px;margin-left:3px;font-size:9px;color:var(--red)">5</span></div><div class="fc">Escalated</div><div class="fc">Flagged</div><div class="fc">Awaiting Reply</div><div class="fc">Replied</div><div class="fc">📧 Gmail</div><div class="fc">💬 WhatsApp</div><div class="fc">💼 LinkedIn</div><div class="fc">📸 Instagram</div><div class="fc">👥 Facebook</div></div>
+<div class="imsg urg"><div style="display:flex;gap:12px;align-items:flex-start"><div class="pi pw">W</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px"><div class="iname">Company A · Priya Sharma</div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="badge bp1">P1</span><span style="font-size:10px;color:var(--red);font-weight:600">🔴 URGENT</span><span style="font-size:10px;color:var(--td)">9:41 AM</span></div></div><div class="isub">Digital Campaign · Active · WhatsApp</div><div class="ibody">"The client wants the campaign live by tomorrow morning — extremely urgent! We need to talk right away."</div><div class="iact"><button class="bg bgsm">✦ AI Reply</button><button class="bgh bgsm">Manual Reply</button><button class="bgh bgsm">Open in WhatsApp ↗</button><button class="bgh bgsm">🚩 Flag</button></div></div></div></div>
+<div class="imsg"><div style="display:flex;gap:12px;align-items:flex-start"><div class="pi pg">G</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px"><div class="iname">Priya Sharma</div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="badge bp2">P2</span><span style="font-size:10px;color:var(--td)">8:15 AM</span></div></div><div class="isub">Notion Dashboard · Planning · Gmail</div><div class="ibody">"Hi Ronit, checking in on the Notion workspace timeline. When can we expect the first draft?"</div><div class="iact"><button class="bg bgsm">✦ AI Reply</button><button class="bgh bgsm">Manual Reply</button><button class="bgh bgsm">Open in Gmail ↗</button></div></div></div></div>
+<div class="imsg"><div style="display:flex;gap:12px;align-items:flex-start"><div class="pi pli">Li</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px"><div class="iname">Arjun Mehta</div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="badge bgrey">Lead</span><span style="font-size:10px;color:var(--td)">Yesterday</span></div></div><div class="isub">LinkedIn · New Inquiry</div><div class="ibody">"Came across your profile — would love to discuss a potential collaboration for our brand's social media."</div><div class="iact"><button class="bg bgsm">✦ AI Reply</button><button class="bgh bgsm">Open in LinkedIn ↗</button></div></div></div></div>
+<div class="imsg"><div style="display:flex;gap:12px;align-items:flex-start"><div class="pi pin">In</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px"><div class="iname">StyleCo Brand</div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><span class="badge bp3">P3</span><span style="font-size:10px;color:var(--td)">Yesterday</span></div></div><div class="isub">Instagram DM · Social Media</div><div class="ibody">"The reels performed really well this week! Engagement is up 40%. Thank you so much 🎉"</div><div class="iact"><button class="bg bgsm">✦ AI Reply</button><button class="bgh bgsm">Open in Instagram ↗</button></div></div></div></div>
+</div>
+<!-- WORK -->
+<div class="screen" id="s-work">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="stitle">Work</div><button class="bg">+ New</button></div>
+<div class="ctx"><div class="cdot"></div><span>"3 active projects, Mr. Bose. Company A's campaign is pressing — 2 tasks overdue. Shall I reprioritise your afternoon?"</span></div>
+<div class="frow"><div class="fc on">Kanban</div><div class="fc">Timeline</div><div class="fc">List</div></div>
+<div class="kboard">
+  <div class="kcol"><div class="kch"><span>Planning</span><span class="badge bgrey">1</span></div><div class="kc"><div class="kcc">Company B</div><div class="kcn">Brand Strategy</div><span class="badge bp2">P2</span><div class="pb"><div class="pbi" style="width:10%"></div></div><div style="font-size:9px;color:var(--td);margin-top:6px">Start: Apr 1</div></div></div>
+  <div class="kcol"><div class="kch"><span>Active</span><span class="badge bgold">2</span></div><div class="kc" style="border-color:rgba(255,75,75,0.3)"><div class="kcc">Company A</div><div class="kcn">Digital Campaign</div><span class="badge bp1">P1</span><div class="pb"><div class="pbi" style="width:65%"></div></div><div style="font-size:9px;color:var(--red);margin-top:6px;font-weight:500">Due: Friday ⚠</div></div><div class="kc"><div class="kcc">Company C</div><div class="kcn">Notion OS Build</div><span class="badge bp3">P3</span><div class="pb"><div class="pbi" style="width:35%"></div></div><div style="font-size:9px;color:var(--td);margin-top:6px">Due: Apr 15</div></div></div>
+  <div class="kcol"><div class="kch"><span>In Review</span><span class="badge bgrey">0</span></div><div class="ke"><span style="font-size:10px;color:var(--ob5)">empty</span></div></div>
+  <div class="kcol"><div class="kch"><span>On Hold</span><span class="badge bgrey">0</span></div><div class="ke"><span style="font-size:10px;color:var(--ob5)">empty</span></div></div>
+  <div class="kcol"><div class="kch"><span>Completed</span><span class="badge bgrey">1</span></div><div class="kc" style="opacity:0.45"><div class="kcc">Company A</div><div class="kcn">Social Media Setup</div><span class="badge bp2">P2</span><div class="pb"><div class="pbi pbi-g" style="width:100%"></div></div></div></div>
+</div>
+<div class="slbl">Today's Tasks</div>
+<div class="tlayout">
+  <div>
+    <div class="trow ov"><div class="tck"></div><div style="flex:1;font-size:13px">Finalise campaign assets <span class="badge bp1" style="margin-left:6px">P1</span></div><span style="font-size:10px;color:var(--red)">Overdue</span></div>
+    <div class="trow ov"><div class="tck"></div><div style="flex:1;font-size:13px">Send invoice INV-003 <span class="badge bp1" style="margin-left:6px">P1</span></div><span style="font-size:10px;color:var(--red)">Overdue</span></div>
+    <div class="trow"><div class="tck" style="border-color:rgba(255,215,0,0.3)"></div><div style="flex:1;font-size:13px">Notion DB review <span class="badge bp2" style="margin-left:6px">P2</span></div><span style="font-size:10px;color:var(--ts)">3:00 PM</span></div>
+    <div class="trow"><div class="tck"></div><div style="flex:1;font-size:13px">Instagram reel brief <span class="badge bp3" style="margin-left:6px">P3</span></div><span style="font-size:10px;color:var(--ts)">5:00 PM</span></div>
+    <div class="trow dn"><div class="tck">✓</div><div style="flex:1;font-size:13px"><span>Weekly report draft</span></div><span style="font-size:10px;color:var(--green)">Done</span></div>
+  </div>
+  <div class="tan">
+    <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;font-weight:600">Task Analytics</div>
+    <div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--ts)">Completion</span><span style="font-size:11px;color:var(--g0);font-weight:600">40%</span></div><div class="pb"><div class="pbi" style="width:40%"></div></div></div>
+    <div class="g2" style="gap:7px;margin-top:12px">
+      <div style="background:var(--ob3);border-radius:8px;padding:10px;text-align:center"><div style="font-family:var(--serif);font-size:20px;color:var(--red);font-weight:600">2</div><div style="font-size:9px;color:var(--ts);margin-top:2px">Overdue</div></div>
+      <div style="background:var(--ob3);border-radius:8px;padding:10px;text-align:center"><div style="font-family:var(--serif);font-size:20px;color:var(--amber);font-weight:600">2</div><div style="font-size:9px;color:var(--ts);margin-top:2px">Pending</div></div>
+      <div style="background:var(--ob3);border-radius:8px;padding:10px;text-align:center"><div style="font-family:var(--serif);font-size:20px;color:var(--green);font-weight:600">1</div><div style="font-size:9px;color:var(--ts);margin-top:2px">Done</div></div>
+      <div style="background:var(--ob3);border-radius:8px;padding:10px;text-align:center"><div style="font-family:var(--serif);font-size:20px;color:var(--g0);font-weight:600">4h</div><div style="font-size:9px;color:var(--ts);margin-top:2px">Est. left</div></div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- CLIENTS -->
+<div class="screen" id="s-clients">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="stitle">Clients</div><button class="bg">+ New Client</button></div>
+<div class="ctx"><div class="cdot"></div><span>"3 active clients generating ₹1.2L this month, Mr. Bose. Company A requires immediate attention. 1 prospect worth ₹2.8L in pipeline."</span></div>
+<div class="frow"><div class="fc on">All</div><div class="fc">Active</div><div class="fc">VIP</div><div class="fc">Lead</div><div class="fc">Pipeline</div></div>
+<div class="crow"><div class="cav">CA</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="font-size:14px;font-weight:600">Company A</span><span class="badge bgold">VIP</span><span class="badge bp1">P1</span></div><div style="font-size:11px;color:var(--ts)">Digital Marketing · Priya Sharma</div><div style="font-size:11px;color:var(--g0);margin-top:3px;font-weight:500">₹45,000/mo · 37.5% of revenue</div><div class="spark"><div class="sb" style="height:40%;background:rgba(255,215,0,0.3)"></div><div class="sb" style="height:55%;background:rgba(255,215,0,0.4)"></div><div class="sb" style="height:50%;background:rgba(255,215,0,0.35)"></div><div class="sb" style="height:70%;background:rgba(255,215,0,0.5)"></div><div class="sb" style="height:60%;background:rgba(255,215,0,0.45)"></div><div class="sb" style="height:85%;background:rgba(255,215,0,0.65)"></div><div class="sb" style="height:100%;background:var(--g0)"></div></div></div><div style="text-align:right"><div class="hd" style="background:var(--amber);margin-left:auto;margin-bottom:5px;box-shadow:0 0 6px rgba(255,184,0,0.5)"></div><div style="font-size:10px;color:var(--ts)">1 project</div><div style="font-size:11px;color:var(--g0);margin-top:2px">★★★★☆</div></div></div>
+<hr class="dm">
+<div class="crow"><div class="cav">CB</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="font-size:14px;font-weight:600">Company B</span><span class="badge bgrey">Active</span><span class="badge bp2">P2</span></div><div style="font-size:11px;color:var(--ts)">Brand Strategy · Arjun Patel</div><div style="font-size:11px;color:var(--g0);margin-top:3px;font-weight:500">₹30,000/mo · 25% of revenue</div><div class="spark"><div class="sb" style="height:55%;background:rgba(255,215,0,0.3)"></div><div class="sb" style="height:60%;background:rgba(255,215,0,0.35)"></div><div class="sb" style="height:68%;background:rgba(255,215,0,0.4)"></div><div class="sb" style="height:65%;background:rgba(255,215,0,0.4)"></div><div class="sb" style="height:78%;background:rgba(255,215,0,0.5)"></div><div class="sb" style="height:74%;background:rgba(255,215,0,0.5)"></div><div class="sb" style="height:90%;background:rgba(255,215,0,0.7)"></div></div></div><div style="text-align:right"><div class="hd con" style="margin-left:auto;margin-bottom:5px"></div><div style="font-size:10px;color:var(--ts)">1 project</div><div style="font-size:11px;color:var(--g0);margin-top:2px">★★★★★</div></div></div>
+<hr class="dm">
+<div class="crow"><div class="cav">CC</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="font-size:14px;font-weight:600">Company C</span><span class="badge bgrey">Active</span><span class="badge bp3">P3</span></div><div style="font-size:11px;color:var(--ts)">Notion OS · Sneha Roy</div><div style="font-size:11px;color:var(--g0);margin-top:3px;font-weight:500">₹25,000/mo · 20.8% of revenue</div><div class="spark"><div class="sb" style="height:30%;background:rgba(255,215,0,0.2)"></div><div class="sb" style="height:40%;background:rgba(255,215,0,0.28)"></div><div class="sb" style="height:35%;background:rgba(255,215,0,0.24)"></div><div class="sb" style="height:50%;background:rgba(255,215,0,0.32)"></div><div class="sb" style="height:48%;background:rgba(255,215,0,0.3)"></div><div class="sb" style="height:62%;background:rgba(255,215,0,0.42)"></div><div class="sb" style="height:72%;background:rgba(255,215,0,0.52)"></div></div></div><div style="text-align:right"><div class="hd con" style="margin-left:auto;margin-bottom:5px"></div><div style="font-size:10px;color:var(--ts)">1 project</div><div style="font-size:11px;color:var(--g0);margin-top:2px">★★★☆☆</div></div></div>
+<hr class="dm">
+<div class="crow" style="opacity:0.6"><div class="cav" style="background:rgba(76,154,255,0.1);border-color:rgba(76,154,255,0.25);color:var(--blue)">AM</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="font-size:14px;font-weight:600">Arjun Mehta</span><span class="badge bblue">Lead</span></div><div style="font-size:11px;color:var(--ts)">Inquiry via LinkedIn · Potential: ₹2.8L</div><div class="pb" style="max-width:130px;margin-top:6px"><div class="pbi pbi-b" style="width:68%"></div></div><div style="font-size:10px;color:var(--blue);margin-top:3px">68% conversion probability</div></div><div style="text-align:right"><div class="hd coff" style="margin-left:auto;margin-bottom:5px"></div><div style="font-size:10px;color:var(--ts)">prospect</div></div></div>
+</div>
+<!-- FINANCE -->
+<div class="screen" id="s-finance">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="stitle">Finance</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="bg bgsm">+ Invoice</button><button class="bgh bgsm">+ Expense</button><button class="bgh bgsm">+ Subscription</button><button class="bgh bgsm">+ Transaction</button></div></div>
+<div class="ctx"><div class="cdot"></div><span>"Revenue is strong this month, Mr. Bose. However — your Claude API credits stand at 18%. Most disagreeable to run dry. Shall I arrange a top-up?"</span></div>
+<div class="frow"><div class="fc on">This Month</div><div class="fc">This Week</div><div class="fc">This Quarter</div><div class="fc">This Year</div></div>
+<div class="g4" style="margin-bottom:13px">
+  <div class="sc"><div class="slabel">Revenue</div><div class="snum">₹1.2L</div></div>
+  <div class="sc"><div class="slabel">Expenses</div><div style="font-family:var(--serif);font-size:29px;color:var(--red);font-weight:600">₹29K</div><div style="font-size:10px;color:var(--ts);margin-top:3px">incl. ₹11.4K subs</div></div>
+  <div class="sc"><div class="slabel">Net Profit</div><div style="font-family:var(--serif);font-size:29px;color:var(--green);font-weight:600">₹91K</div></div>
+  <div class="sc"><div class="slabel">Outstanding</div><div style="font-family:var(--serif);font-size:29px;color:var(--amber);font-weight:600">₹45K</div></div>
+</div>
+<div class="gcard" style="margin-bottom:12px">
+  <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;font-weight:600">Revenue vs Expenses — March 2026</div>
+  <div class="fbars"><div class="fb inc" style="height:66%"></div><div class="fb exp" style="height:13%"></div><div class="fb inc" style="height:80%"></div><div class="fb exp" style="height:19%"></div><div class="fb inc" style="height:93%"></div><div class="fb exp" style="height:10%"></div><div class="fb inc" style="height:100%"></div><div class="fb exp" style="height:16%"></div></div>
+  <div style="display:flex;gap:14px;margin-top:8px"><div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:2px;background:var(--g0)"></div><span style="font-size:10px;color:var(--ts)">Income</span></div><div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:2px;background:var(--ob4)"></div><span style="font-size:10px;color:var(--ts)">Expense</span></div></div>
+</div>
+<div class="slbl">Subscriptions & Credits</div>
+<div class="g2" style="margin-bottom:12px">
+  <div style="background:rgba(26,26,36,0.72);border:1px solid rgba(255,215,0,0.12);border-radius:var(--radius);padding:14px">
+    <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;font-weight:600">Monthly Tool Spend</div>
+    <div style="font-family:var(--serif);font-size:22px;color:var(--red);font-weight:600;margin-bottom:10px">₹11,400</div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:var(--border-dim)"><span style="font-size:11px;color:var(--ts)">🤖 AI Tools</span><span style="font-size:11px;color:var(--red);font-weight:500">₹6,200</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:var(--border-dim)"><span style="font-size:11px;color:var(--ts)">☁️ Storage & Hosting</span><span style="font-size:11px;color:var(--amber);font-weight:500">₹2,400</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:var(--border-dim)"><span style="font-size:11px;color:var(--ts)">💬 Communications</span><span style="font-size:11px;color:var(--amber);font-weight:500">₹1,800</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:11px;color:var(--ts)">🛠️ Productivity</span><span style="font-size:11px;color:var(--green);font-weight:500">₹1,000</span></div>
+  </div>
+  <div style="background:rgba(26,26,36,0.72);border:1px solid rgba(255,215,0,0.12);border-radius:var(--radius);padding:14px">
+    <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;font-weight:600">Profit After Subs</div>
+    <div style="font-family:var(--serif);font-size:22px;color:var(--green);font-weight:600;margin-bottom:10px">₹90,600</div>
+    <div style="font-size:10px;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px">Cost Per Client</div>
+    <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="font-size:11px;color:var(--g0)">Company A</span><span style="font-size:11px;color:var(--tw)">₹3,800/mo</span></div>
+    <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="font-size:11px;color:var(--g0)">Company B</span><span style="font-size:11px;color:var(--tw)">₹2,400/mo</span></div>
+    <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="font-size:11px;color:var(--g0)">Company C</span><span style="font-size:11px;color:var(--tw)">₹1,800/mo</span></div>
+  </div>
+</div>
+<div class="gcard" style="margin-bottom:12px">
+  <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;font-weight:600">All Subscriptions & Services</div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(255,107,53,0.15);display:flex;align-items:center;justify-content:center;font-size:11px">🤖</div><div><div style="font-size:12px;font-weight:600">Claude API</div><div style="font-size:10px;color:var(--td)">Anthropic · AI Engine</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--g0);font-weight:600">₹2,100/mo</div><span class="badge bred" style="font-size:9px">18% left ⚠</span></div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:3px;overflow:hidden"><div style="width:18%;height:3px;background:var(--red);border-radius:4px"></div></div><span style="font-size:10px;color:var(--red);font-weight:500">18%</span></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(100,149,237,0.15);display:flex;align-items:center;justify-content:center;font-size:11px">🎙️</div><div><div style="font-size:12px;font-weight:600">ElevenLabs</div><div style="font-size:10px;color:var(--td)">Voice API · Benjamin & Bella</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--g0);font-weight:600">₹1,600/mo</div><span class="badge bamber" style="font-size:9px">62% left</span></div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:3px;overflow:hidden"><div style="width:62%;height:3px;background:var(--amber);border-radius:4px"></div></div><span style="font-size:10px;color:var(--amber);font-weight:500">62%</span></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:11px">📓</div><div><div style="font-size:12px;font-weight:600">Notion</div><div style="font-size:10px;color:var(--td)">Workspace · Plus Plan</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--g0);font-weight:600">₹800/mo</div><div style="font-size:10px;color:var(--green);margin-top:2px">Renews Apr 1 ✓</div></div></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(66,133,244,0.15);display:flex;align-items:center;justify-content:center;font-size:11px">💾</div><div><div style="font-size:12px;font-weight:600">Google Drive</div><div style="font-size:10px;color:var(--td)">Storage · 15GB Free</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--green);font-weight:600">Free</div><span class="badge bamber" style="font-size:9px">11.2 / 15 GB</span></div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:3px;overflow:hidden"><div style="width:75%;height:3px;background:var(--amber);border-radius:4px"></div></div><span style="font-size:10px;color:var(--amber);font-weight:500">75%</span></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:11px">▲</div><div><div style="font-size:12px;font-weight:600">Vercel</div><div style="font-size:10px;color:var(--td)">Hosting · Free Tier</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--green);font-weight:600">Free</div><div style="font-size:10px;color:var(--green);margin-top:2px">All deployments live ✓</div></div></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(37,211,102,0.15);display:flex;align-items:center;justify-content:center;font-size:11px">💬</div><div><div style="font-size:12px;font-weight:600">WhatsApp Business</div><div style="font-size:10px;color:var(--td)">Meta API · 1K conv/mo free</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--green);font-weight:600">Free</div><span class="badge bgreen" style="font-size:9px">340/1000 used</span></div></div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:3px;overflow:hidden"><div style="width:34%;height:3px;background:var(--green);border-radius:4px"></div></div><span style="font-size:10px;color:var(--green);font-weight:500">34%</span></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(255,107,53,0.12);display:flex;align-items:center;justify-content:center;font-size:11px">🌐</div><div><div style="font-size:12px;font-weight:600">No-Way Website</div><div style="font-size:10px;color:var(--td)">Hosting · Annual</div></div></div><div style="text-align:right"><div style="font-size:12px;color:var(--g0);font-weight:600">₹2,500/mo</div><div style="font-size:10px;color:var(--green);margin-top:2px">Renews Jun 2026</div></div></div></div>
+  <div class="subrow"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:center;font-size:11px">🖥️</div><div><div style="font-size:12px;font-weight:600">NAS Storage</div><div style="font-size:10px;color:var(--td)">Self-hosted · Post-investment</div></div></div><span class="badge bgrey" style="font-size:9px">Phase 3 — Pending</span></div></div>
+</div>
+<div class="slbl">Recent Invoices</div>
+<div class="gcard">
+  <div class="ivrow"><div><div style="font-size:12px;font-weight:600">INV-003 · Company A</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Digital Campaign · March 2026</div></div><div style="text-align:right"><div style="font-size:13px;color:var(--g0);font-weight:600;margin-bottom:4px">₹45,000</div><span class="badge bamber">Sent</span></div></div>
+  <div class="ivrow"><div><div style="font-size:12px;font-weight:600">INV-002 · Company B</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Brand Strategy</div></div><div style="text-align:right"><div style="font-size:13px;color:var(--g0);font-weight:600;margin-bottom:4px">₹30,000</div><span class="badge bgreen">Paid ✓</span></div></div>
+  <div class="ivrow"><div><div style="font-size:12px;font-weight:600">INV-001 · Company A</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Retainer · February 2026</div></div><div style="text-align:right"><div style="font-size:13px;color:var(--g0);font-weight:600;margin-bottom:4px">₹45,000</div><span class="badge bred">Overdue</span></div></div>
+  <div style="text-align:center;padding:10px 0"><button class="bgh bgsm">Load More Invoices ↓</button></div>
+</div>
+</div>
+<!-- GROWTH HUB -->
+<div class="screen" id="s-growth">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="stitle">Growth Hub</div><div style="font-family:var(--serif);color:var(--g0)">Today: <span style="font-size:22px;font-weight:600">8</span><span style="font-size:12px">/10</span></div></div>
+<div class="ctx"><div class="cdot"></div><span>"No-Way is growing well, Mr. Bose. LinkedIn engagement is up 23% this week. You are 5 posts behind your monthly target — I would gently suggest we address that."</span></div>
+<div class="slbl">No-Way Brand Performance</div>
+<div class="g2" style="margin-bottom:11px">
+  <div class="gcard">
+    <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;font-weight:600">Social Following</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px"><div class="pi pli" style="width:22px;height:22px;font-size:9px;border-radius:5px">Li</div><span style="font-size:12px">LinkedIn</span></div><div style="text-align:right"><div style="font-size:13px;font-weight:600">1,240</div><div style="display:flex;align-items:flex-end;gap:2px;height:18px;margin-top:3px;justify-content:flex-end"><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.35);height:40%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.45);height:55%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.55);height:65%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.7);height:80%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:var(--g0);height:100%"></div></div><div style="font-size:10px;color:var(--green)">↑ +84 this month</div></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px"><div class="pi pin" style="width:22px;height:22px;font-size:9px;border-radius:5px">In</div><span style="font-size:12px">Instagram</span></div><div style="text-align:right"><div style="font-size:13px;font-weight:600">876</div><div style="display:flex;align-items:flex-end;gap:2px;height:18px;margin-top:3px;justify-content:flex-end"><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.3);height:50%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.4);height:60%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.5);height:70%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,215,0,0.6);height:85%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:var(--g0);height:100%"></div></div><div style="font-size:10px;color:var(--green)">↑ +62 this month</div></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:8px"><div class="pi pf" style="width:22px;height:22px;font-size:9px;border-radius:5px">Fb</div><span style="font-size:12px">Facebook</span></div><div style="text-align:right"><div style="font-size:13px;font-weight:600">534</div><div style="display:flex;align-items:flex-end;gap:2px;height:18px;margin-top:3px;justify-content:flex-end"><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,184,0,0.3);height:60%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,184,0,0.35);height:65%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,184,0,0.4);height:70%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:rgba(255,184,0,0.5);height:80%"></div><div style="width:4px;border-radius:1px 1px 0 0;background:var(--amber);height:100%"></div></div><div style="font-size:10px;color:var(--amber)">↑ +18 this month</div></div></div>
+  </div>
+  <div class="gcard">
+    <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;font-weight:600">Engagement This Month</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--ts)">Avg. Engagement Rate</span><span style="font-size:13px;color:var(--g0);font-weight:600">4.8%</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--ts)">Total Impressions</span><span style="font-size:13px;color:var(--tw);font-weight:600">24.6K</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--ts)">Posts Published</span><span style="font-size:12px;font-weight:600">11 / 16 <span style="color:var(--amber);font-size:10px">⚠ behind</span></span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:12px;color:var(--ts)">Website Traffic</span><span style="font-size:13px;color:var(--green);font-weight:600">↑ 1,840</span></div>
+    <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--ts)">Best Platform</span><span style="font-size:12px;color:var(--g0);font-weight:600">LinkedIn</span></div>
+  </div>
+</div>
+<div class="gcard" style="margin-bottom:11px">
+  <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;font-weight:600">Best Performing Content This Month</div>
+  <div style="padding:9px 0;border-bottom:var(--border-dim)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600">Notion OS Case Study Reel</div><div style="font-size:10px;color:var(--td);margin-top:2px">Instagram · 3 days ago</div></div><div style="text-align:right"><span class="badge bgreen" style="font-size:9px">4,200 views</span><div style="font-size:10px;color:var(--green);margin-top:3px">8.2% engagement</div></div></div></div>
+  <div style="padding:9px 0;border-bottom:var(--border-dim)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600">"Why every agency needs a Notion OS"</div><div style="font-size:10px;color:var(--td);margin-top:2px">LinkedIn · 6 days ago</div></div><div style="text-align:right"><span class="badge bgreen" style="font-size:9px">1,840 impressions</span><div style="font-size:10px;color:var(--green);margin-top:3px">6.1% engagement</div></div></div></div>
+  <div style="padding:9px 0"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600">No-Way Agency Introduction</div><div style="font-size:10px;color:var(--td);margin-top:2px">Facebook · 10 days ago</div></div><div style="text-align:right"><span class="badge bamber" style="font-size:9px">640 reach</span><div style="font-size:10px;color:var(--amber);margin-top:3px">3.4% engagement</div></div></div></div>
+</div>
+<div class="gcard" style="margin-bottom:11px">
+  <div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;font-weight:600">Business Performance Forecast</div>
+  <div class="g2" style="gap:9px">
+    <div style="background:var(--ob3);border-radius:8px;padding:12px"><div style="font-size:10px;color:var(--ts);margin-bottom:5px">April Revenue</div><div style="font-family:var(--serif);font-size:20px;color:var(--g0);font-weight:600">₹1.55L</div><div style="font-size:10px;color:var(--green);margin-top:3px">↑ +29% vs March</div></div>
+    <div style="background:var(--ob3);border-radius:8px;padding:12px"><div style="font-size:10px;color:var(--ts);margin-bottom:5px">Client Capacity</div><div style="font-family:var(--serif);font-size:20px;color:var(--g0);font-weight:600">3 / 5</div><div style="font-size:10px;color:var(--amber);margin-top:3px">2 slots available</div></div>
+    <div style="background:var(--ob3);border-radius:8px;padding:12px"><div style="font-size:10px;color:var(--ts);margin-bottom:5px">On-Time Rate</div><div style="font-family:var(--serif);font-size:20px;color:var(--green);font-weight:600">87%</div><div style="font-size:10px;color:var(--ts);margin-top:3px">this quarter</div></div>
+    <div style="background:var(--ob3);border-radius:8px;padding:12px"><div style="font-size:10px;color:var(--ts);margin-bottom:5px">Q1 Goal</div><div style="font-family:var(--serif);font-size:20px;color:var(--amber);font-weight:600">68%</div><div style="font-size:10px;color:var(--amber);margin-top:3px">₹2.4L / ₹3.5L</div></div>
+  </div>
+</div>
+<div class="gcard" style="margin-bottom:11px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:0.8px;font-weight:600">Posting Consistency — March</div><span class="badge bamber" style="font-size:9px">11 / 16 target</span></div>
+  <div style="display:flex;gap:4px;flex-wrap:wrap">
+    <div style="width:20px;height:20px;border-radius:4px;background:var(--g0)" title="Posted"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--ob4)" title="Missed"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--ob4)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--ob4)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--ob4)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:var(--g0)"></div><div style="width:20px;height:20px;border-radius:4px;background:rgba(255,215,0,0.2)" title="Today"></div>
+  </div>
+  <div style="display:flex;gap:14px;margin-top:9px"><div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:var(--g0)"></div><span style="font-size:10px;color:var(--ts)">Posted</span></div><div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:var(--ob4)"></div><span style="font-size:10px;color:var(--ts)">Missed</span></div></div>
+</div>
+<div class="slbl">Market Intelligence</div>
+<div class="tcard"><div class="ttag">Trending · LinkedIn</div><div style="font-size:13px;color:var(--tw);font-weight:600;margin-bottom:5px">Short-form video dominates B2B content in Q1 2026</div><div style="font-size:12px;color:var(--ts);line-height:1.6">LinkedIn reels seeing 3× higher engagement than static posts this month.</div><div style="font-size:10px;color:var(--td);margin-top:6px">Source: Reuters · Published today</div></div>
+<div class="tcard"><div class="ttag">Trending · Notion</div><div style="font-size:13px;color:var(--tw);font-weight:600;margin-bottom:5px">Notion AI automations replacing manual CRM workflows</div><div style="font-size:12px;color:var(--ts);line-height:1.6">Key opportunity for No-Way's Notion OS service — demand growing 40% MoM.</div><div style="font-size:10px;color:var(--td);margin-top:6px">Source: X (Twitter) trending · Published 2h ago</div></div>
+<div class="tcard"><div class="ttag">Industry · Anthropic</div><div style="font-size:13px;color:var(--tw);font-weight:600;margin-bottom:5px">Claude 4 expanding agentic workflow capabilities</div><div style="font-size:12px;color:var(--ts);line-height:1.6">Directly relevant to The Bureau's Phase 5 agent expansion and No-Way's AI service offerings.</div><div style="font-size:10px;color:var(--td);margin-top:6px">Source: Anthropic Blog · Published yesterday</div></div>
+<div class="slbl">Business Tools</div>
+<div class="g2">
+  <div class="gcard" style="cursor:pointer;text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:7px">🏆</div><div style="font-size:13px;color:var(--g0);font-weight:600">Wins Log</div><div style="font-size:11px;color:var(--ts);margin-top:3px">3 wins this month</div></div>
+  <div class="gcard" style="cursor:pointer;text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:7px">🎯</div><div style="font-size:13px;color:var(--g0);font-weight:600">Pipeline</div><div style="font-size:11px;color:var(--ts);margin-top:3px">2 prospects tracked</div></div>
+  <div class="gcard" style="cursor:pointer;text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:7px">📈</div><div style="font-size:13px;color:var(--g0);font-weight:600">Revenue Goals</div><div style="font-size:11px;color:var(--green);margin-top:3px;font-weight:500">68% to target</div></div>
+  <div class="gcard" style="cursor:pointer;text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:7px">🤝</div><div style="font-size:13px;color:var(--g0);font-weight:600">Networking CRM</div><div style="font-size:11px;color:var(--ts);margin-top:3px">12 contacts tracked</div></div>
+</div>
+</div>
+<!-- SETTINGS -->
+<div class="screen" id="s-settings">
+<div class="stitle" style="margin-bottom:16px">Settings</div>
+<div class="rc" style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+  <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(255,215,0,0.3),rgba(255,215,0,0.1));border:2px solid var(--g0);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;color:var(--g0);flex-shrink:0;box-shadow:var(--glow-sm)">RB</div>
+  <div style="flex:1">
+    <div style="font-family:var(--serif);font-size:18px;color:var(--g0);font-weight:600">Ronit Bose</div>
+    <div style="font-size:11px;color:var(--ts);margin-top:2px">Founder & CEO · No-Way Digital Agency</div>
+    <div style="font-size:11px;color:var(--ts);margin-top:2px">Kolkata, West Bengal · no-way.in</div>
+  </div>
+  <button class="bgh bgsm">Edit Profile</button>
+</div>
+<div class="slbl">My Butler</div>
+<div class="gcard" style="margin-bottom:14px">
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Active Butler</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Currently serving</div></div><div style="display:flex;gap:7px"><div style="padding:5px 14px;border-radius:20px;font-size:12px;background:var(--g4);color:var(--g0);border:1px solid rgba(255,215,0,0.3);cursor:pointer;font-weight:500">Benjamin</div><div style="padding:5px 14px;border-radius:20px;font-size:12px;border:1px solid var(--ob4);color:var(--ts);cursor:pointer;font-weight:500">Bella</div></div></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Formality Level</div><div style="font-size:11px;color:var(--ts);margin-top:2px">How formal should Benjamin be?</div></div><input type="range" min="1" max="3" value="2" style="accent-color:var(--g0);width:100px"></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Address Me As</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Mr. Bose / Sir / Ronit</div></div><select style="background:var(--ob3);border:1px solid var(--ob5);color:var(--tw);padding:5px 10px;border-radius:6px;font-size:12px;font-family:var(--sans)"><option>Mr. Bose</option><option>Sir</option><option>Ronit</option></select></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Flow State Detection</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Benjamin detects when you're in flow</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Stress Detection</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Benjamin responds when stress detected</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Voice Preview</div><div style="font-size:11px;color:var(--ts);margin-top:2px">Deep, measured British male</div></div><button class="bg bgsm">▶ Preview</button></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Learning Log</div><div style="font-size:11px;color:var(--amber);margin-top:2px;font-weight:500">3 patterns pending approval</div></div><button class="bg bgsm">Review →</button></div>
+</div>
+<div class="slbl">Connected Accounts</div>
+<div class="gcard" style="margin-bottom:14px">
+  <div class="acclbl">Google</div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(234,67,53,0.15)">📧</div><span style="font-size:13px;font-weight:500">Gmail</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">Connected</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(66,133,244,0.15)">📅</div><span style="font-size:13px;font-weight:500">Google Calendar</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">Connected</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(66,133,244,0.15)">💾</div><span style="font-size:13px;font-weight:500">Google Drive</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">Connected</span></div></div>
+  <div class="acclbl">Social Media</div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(37,211,102,0.15)">💬</div><span style="font-size:13px;font-weight:500">WhatsApp Business</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">Connected</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(0,119,181,0.15)">💼</div><span style="font-size:13px;font-weight:500">LinkedIn Business</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd coff"></div><span style="font-size:11px;color:var(--ts);cursor:pointer;text-decoration:underline">Connect</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(193,53,132,0.15)">📸</div><span style="font-size:13px;font-weight:500">Instagram Business</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd coff"></div><span style="font-size:11px;color:var(--ts);cursor:pointer;text-decoration:underline">Connect</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(24,119,242,0.15)">👥</div><span style="font-size:13px;font-weight:500">Facebook Business</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd coff"></div><span style="font-size:11px;color:var(--ts);cursor:pointer;text-decoration:underline">Connect</span></div></div>
+  <div class="acclbl">AI Tools</div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(255,107,53,0.15)">🤖</div><span style="font-size:13px;font-weight:500">Claude API</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span class="badge bred" style="font-size:9px">18% credits</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(100,149,237,0.15)">🎙️</div><span style="font-size:13px;font-weight:500">ElevenLabs</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">62% left</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(255,255,255,0.08)">🎨</div><span style="font-size:13px;font-weight:500">DALL-E / OpenAI</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd coff"></div><span style="font-size:11px;color:var(--ts);cursor:pointer;text-decoration:underline">Connect</span></div></div>
+  <div class="acclbl">Finance & Productivity</div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(99,91,255,0.15)">💳</div><span style="font-size:13px;font-weight:500">Stripe</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd coff"></div><span style="font-size:11px;color:var(--ts);cursor:pointer;text-decoration:underline">Connect</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(0,102,204,0.15)">💸</div><span style="font-size:13px;font-weight:500">Razorpay</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd coff"></div><span style="font-size:11px;color:var(--ts);cursor:pointer;text-decoration:underline">Connect</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(0,112,240,0.15)">📓</div><span style="font-size:13px;font-weight:500">Notion Workspace</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">Connected</span></div></div>
+  <div class="accrow"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(255,255,255,0.07)">▲</div><span style="font-size:13px;font-weight:500">Vercel</span></div><div style="display:flex;align-items:center;gap:7px"><div class="hd con"></div><span style="font-size:11px;color:var(--green);font-weight:500">Connected</span></div></div>
+  <div class="accrow" style="border-bottom:none"><div style="display:flex;align-items:center"><div class="acico" style="background:rgba(255,215,0,0.1)">➕</div><span style="font-size:13px;font-weight:500;color:var(--g0)">Add Custom Account</span></div><span style="font-size:12px;color:var(--g0)">→</span></div>
+</div>
+<div class="slbl">Appearance</div>
+<div class="gcard" style="margin-bottom:14px">
+  <div class="srow"><div style="font-size:13px;font-weight:600">Dark Mode</div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="srow"><div style="font-size:13px;font-weight:600">Language</div><select style="background:var(--ob3);border:1px solid var(--ob5);color:var(--tw);padding:5px 10px;border-radius:6px;font-size:12px;font-family:var(--sans)"><option>English</option><option>हिंदी</option><option>বাংলা</option></select></div>
+</div>
+<div class="slbl">Security</div>
+<div class="gcard">
+  <div class="srow"><div style="font-size:13px;font-weight:600">PIN Protection</div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="srow"><div style="font-size:13px;font-weight:600">Biometric Login</div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="srow"><div style="font-size:13px;font-weight:600">Auto-lock (5 min)</div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+  <div class="srow"><div><div style="font-size:13px;font-weight:600">Activity Log</div><div style="font-size:11px;color:var(--ts);margin-top:2px">24 actions recorded</div></div><button class="bg bgsm">View Log</button></div>
+</div>
+<div class="vtag">THE BUREAU — v1.0 · No-Way · All In Order.</div>
+</div>
+</div></div></div>
+<!-- BELL BUTTON -->
+<div class="bellbtn" onclick="toggleChat()">
+  <svg class="bellsvg" viewBox="0 0 54 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="1" width="52" height="58" rx="10" fill="#0A0A10" stroke="#FFD700" stroke-width="1.5"/>
+    <ellipse cx="27" cy="52" rx="7" ry="4" fill="none" stroke="#FFD700" stroke-width="1.5"/>
+    <rect x="23" y="48" width="8" height="4" fill="#0A0A10"/>
+    <path d="M27 10 C27 10 27 8 27 7" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="27" cy="6" r="2.5" fill="none" stroke="#FFD700" stroke-width="1.5"/>
+    <path d="M14 42 C14 42 13 40 13 32 C13 22 18 14 27 14 C36 14 41 22 41 32 C41 40 40 42 40 42 Z" fill="#13131A" stroke="#FFD700" stroke-width="1.5"/>
+    <rect x="11" y="40" width="32" height="5" rx="2.5" fill="#0A0A10" stroke="#FFD700" stroke-width="1.5"/>
+  </svg>
+  <div class="bnot"></div>
+</div>
+<!-- CHAT -->
+<div class="cbg" id="cbg" onclick="bgClick(event)">
+  <div class="cpanel" id="cpanel">
+    <div class="chead">
+      <div><div style="font-family:var(--serif);font-size:15px;color:var(--g0);font-weight:600">Benjamin</div><div style="font-size:10px;color:var(--ts);margin-top:2px">Your personal business butler · Always at your service</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="exbtn" onclick="toggleFS()">⤢ Expand</button>
+        <button class="cx" onclick="toggleChat()">✕ Close</button>
+      </div>
+    </div>
+    <div class="cchips">
+      <div class="cchip" onclick="sendChip('Brief me on today')">Brief me</div>
+      <div class="cchip" onclick="sendChip('Create a new task')">New task</div>
+      <div class="cchip" onclick="sendChip('Draft a reply for Company A')">Draft reply</div>
+      <div class="cchip" onclick="sendChip('Create a new invoice')">New invoice</div>
+      <div class="cchip" onclick="sendChip('Schedule a meeting')">Schedule</div>
+      <div class="cchip" onclick="sendChip('Show finance summary')">Finance</div>
+    </div>
+    <div class="cmsgs" id="cmsgs">
+      <div class="mb_">"Good morning, Mr. Bose. The Bureau stands prepared. You have 2 urgent matters — Company A requires an immediate reply, and two invoices remain outstanding. Your meeting is at 3:00 PM. How may I be of service, sir?"</div>
+    </div>
+    <div class="cinrow">
+      <div class="vbtn">🎤</div>
+      <input class="cinp" id="cinp" placeholder="How may I assist, Mr. Bose..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="sbtn" onclick="sendMsg()">→</button>
+    </div>
+  </div>
+</div>
+<script>
+var screens=['home','inbox','work','clients','finance','growth','settings'];
+var replies=[
+  '"Quite so, Mr. Bose. I shall attend to it forthwith. Shall I proceed?"',
+  '"Pardon me, sir — I have taken the liberty of preparing three options for your consideration."',
+  '"Most astute, Mr. Bose. Consider it done — I shall update the records accordingly."',
+  '"If I may be so bold — I venture to suggest we address Company A\'s matter first. Shall I proceed?"',
+  '"I quite understand, sir. The matter shall be handled with all discretion. At your service, Mr. Bose."',
+  '"Splendid. I shall ensure everything is in order forthwith, Mr. Bose."',
+  '"The hour grows late, sir. Might I suggest attending to the outstanding invoices first thing tomorrow?"',
+];
+var ri=0,chatOpen=false,fs=false;
+function go(id){
+  screens.forEach(function(s){document.getElementById('s-'+s).classList.remove('on');document.getElementById('n-'+s).classList.remove('on')});
+  document.getElementById('s-'+id).classList.add('on');
+  document.getElementById('n-'+id).classList.add('on');
+  document.querySelector('.content').scrollTop=0;
+}
+function setMode(m){
+  document.getElementById('mb-biz').classList.toggle('on',m==='biz');
+  document.getElementById('mb-cli').classList.toggle('on',m==='cli');
+  document.documentElement.style.setProperty('--g0',m==='cli'?'#A8C5FF':'#FFD700');
+  document.documentElement.style.setProperty('--g1',m==='cli'?'#88AAEE':'#FFC400');
+}
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('cbg').classList.toggle('open',chatOpen);
+  if(chatOpen)setTimeout(function(){document.getElementById('cinp').focus()},150);
+}
+function toggleFS(){
+  fs=!fs;
+  document.getElementById('cbg').classList.toggle('fs',fs);
+  document.getElementById('cpanel').style.maxHeight=fs?'90vh':'62vh';
+}
+function bgClick(e){if(e.target===document.getElementById('cbg'))toggleChat()}
+function sendMsg(){var inp=document.getElementById('cinp');var v=inp.value.trim();if(!v)return;addMsg(v,'u');inp.value='';showTyping();}
+function sendChip(t){addMsg(t,'u');showTyping();}
+function showTyping(){
+  var msgs=document.getElementById('cmsgs');
+  var d=document.createElement('div');d.className='tdots';d.id='typing';
+  d.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(function(){var t=document.getElementById('typing');if(t)t.remove();addMsg(replies[ri++%replies.length],'b');},900);
+}
+function addMsg(txt,type){
+  var msgs=document.getElementById('cmsgs');
+  var d=document.createElement('div');
+  d.className=type==='b'?'mb_':'mu_';
+  d.textContent=txt;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+document.querySelectorAll('.fc').forEach(function(c){c.addEventListener('click',function(){var p=this.closest('.frow');p.querySelectorAll('.fc').forEach(function(x){x.classList.remove('on')});this.classList.add('on')})});
+// TYPEWRITER for brand
+var brandFull='THE BUREAU';var bi=0;
+function typeBrand(){
+  if(bi<=brandFull.length){document.getElementById('brand-txt').textContent=brandFull.substring(0,bi);bi++;setTimeout(typeBrand,120);}
+}
+typeBrand();
+// TYPEWRITER for briefing
+var briefFull='"Good morning, Mr. Bose. The hour is 8:14. Three matters require your attention — Company A\'s campaign is urgent, two invoices are outstanding, and your Claude API credits are at 18%. Your meeting is at 3:00 PM. Shall I proceed, sir?"';
+var bri=0;
+function typeBrief(){
+  if(bri<=briefFull.length){document.getElementById('btxt').textContent=briefFull.substring(0,bri);bri++;setTimeout(typeBrief,28);}
+}
+setTimeout(typeBrief,1800);
+// COUNTDOWN
+function updateClock(){
+  var now=new Date();var target=new Date(now);target.setHours(15,0,0,0);
+  if(target<now)target.setDate(target.getDate()+1);
+  var diff=Math.floor((target-now)/1000);
+  var h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;
+  var el=document.getElementById('cdwn');
+  if(el)el.textContent=(h<10?'0'+h:h)+':'+(m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+}
+setInterval(updateClock,1000);updateClock();
+// COUNT UP
+function countUp(){
+  document.querySelectorAll('.cu[data-t]').forEach(function(el){
+    var target=parseInt(el.getAttribute('data-t'));
+    var prefix=el.getAttribute('data-prefix')||'';
+    var duration=1200;var start=0;var step=target/60;
+    var interval=setInterval(function(){
+      start=Math.min(start+step,target);
+      el.textContent=prefix+(target>1000?Math.floor(start).toLocaleString('en-IN'):Math.floor(start));
+      if(start>=target){clearInterval(interval);}
+    },duration/60);
+  });
+}
+setTimeout(countUp,500);
+</script>
+</body>
+</html>
