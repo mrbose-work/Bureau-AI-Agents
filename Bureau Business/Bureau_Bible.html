@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bureau Bible — Confidential</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fondamento&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #050505;
+    color: #F5F5F0;
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    scroll-behavior: smooth;
+  }
+
+  /* Digital-Only UI Elements */
+  @media screen {
+    body {
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: radial-gradient(circle at top, #1a0505 0%, #050505 100%);
+    }
+    .page {
+      margin-bottom: 50px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+      border: 1px solid #1A1A1A;
+      transition: transform 0.3s ease;
+    }
+    .page:hover { transform: translateY(-5px); }
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 30mm 25mm;
+    position: relative;
+    background: #050505;
+    overflow: hidden;
+    break-after: page;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #FF2D2D 0%, transparent 100%);
+    opacity: 0.5;
+  }
+
+  /* Enhanced Confidential Stamp */
+  .confidential-stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-35deg);
+    border: 8px solid rgba(255, 45, 45, 0.08);
+    color: rgba(255, 45, 45, 0.08);
+    padding: 20px 60px;
+    font-weight: 900;
+    font-size: 80px;
+    text-transform: uppercase;
+    letter-spacing: 15px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 0;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .confidential-stamp-corner {
+    position: absolute;
+    top: 40mm;
+    right: 15mm;
+    border: 2px solid #FF2D2D;
+    color: #FF2D2D;
+    padding: 4px 10px;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transform: rotate(10deg);
+    opacity: 0.6;
+  }
+
+  .confidential-footer {
+    position: absolute;
+    bottom: 15mm;
+    left: 25mm;
+    right: 25mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-top: 1px solid #1A1A1A;
+    padding-top: 10px;
+  }
+
+  .confidential-tag {
+    color: #FF2D2D;
+    font-weight: 600;
+  }
+
+  /* Typography Refinement */
+  h1, h2, h3 { font-family: 'Fondamento', serif; }
+  
+  h1 { font-size: 72px; letter-spacing: 15px; text-transform: uppercase; margin-bottom: 5px; color: #F5F5F0; }
+  h2 { font-size: 42px; color: #FF2D2D; margin-bottom: 15px; letter-spacing: 2px; }
+  h3 { font-size: 22px; color: #F5F5F0; margin-top: 25px; margin-bottom: 12px; border-bottom: 1px solid #1A1A1A; padding-bottom: 5px; }
+  h4 { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-top: 15px; margin-bottom: 8px; color: #8A8A8A; }
+  
+  p { font-size: 13px; color: #B0B0B0; margin-bottom: 12px; text-align: justify; hyphens: auto; }
+  
+  .divider { width: 60px; height: 3px; background: #FF2D2D; margin: 25px 0; }
+  .divider-center { margin: 25px auto; }
+
+  .section-intro { font-size: 11px; color: #FF2D2D; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+
+  /* Logo Blending */
+  .logo-main {
+    mix-blend-mode: screen;
+    filter: brightness(1.2) contrast(1.1);
+  }
+
+  /* Grid Optimization */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 10px; }
+  .card { background: #0A0A0A; padding: 20px; border-radius: 4px; border: 1px solid #1A1A1A; border-left: 4px solid #FF2D2D; margin-bottom: 0; }
+  .card p { margin-bottom: 0; font-size: 12px; }
+
+  .page-number { margin-top: auto; display: flex; justify-content: space-between; font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 2px; padding-bottom: 10px; }
+
+  /* Cover Specifics */
+  .cover { justify-content: center; align-items: center; text-align: center; }
+  .cover-icon { font-size: 140px; color: #FF2D2D; margin-bottom: -10px; }
+  .cover-subtitle { font-size: 12px; letter-spacing: 6px; text-transform: uppercase; color: #8A8A8A; margin-bottom: 40px; }
+  .cover-tagline { font-family: 'Fondamento', serif; font-size: 22px; color: #FF2D2D; font-style: italic; margin-bottom: 50px; }
+
+  /* Color Swatches */
+  .swatch-grid { display: flex; gap: 16px; margin-top: 15px; flex-wrap: wrap; }
+  .swatch { text-align: center; }
+  .swatch-box { width: 80px; height: 80px; border-radius: 8px; border: 1px solid #2A2A2A; margin-bottom: 8px; }
+  .swatch-label { font-size: 10px; color: #8A8A8A; line-height: 1.4; }
+
+  /* Corner Logo - Larger and more visible */
+  .corner-logo {
+    position: absolute; top: 12mm; right: 12mm;
+    width: 150px; height: auto; opacity: 0.7;
+    mix-blend-mode: screen; filter: brightness(1.5) contrast(1.2);
+    z-index: 10;
+  }
+
+  /* Glassmorphism Cards (Digital) */
+  @media screen {
+    .card {
+      background: rgba(10,10,10,0.6);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,45,45,0.08);
+      border-left: 4px solid #FF2D2D;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(255,45,45,0.08);
+    }
+  }
+
+  /* Cover - Tighter Layout */
+  .cover { justify-content: flex-start; align-items: center; text-align: center; padding-top: 35mm; padding-bottom: 10mm; }
+  .cover .logo-container { margin-top: 0; }
+  .cover-watermark { position: absolute; font-size: 140px; font-weight: 900; color: rgba(255,45,45,0.02); z-index: -1; pointer-events: none; text-transform: uppercase; letter-spacing: 20px; white-space: nowrap; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); }
+
+  .cover-subtitle { font-size: 14px; letter-spacing: 10px; text-transform: uppercase; color: #777; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-weight: 300; }
+  .cover-tagline { font-family: 'Fondamento', serif; font-size: 24px; color: #FF2D2D; font-style: italic; margin-bottom: 25px; }
+
+  /* Ambient Glow (Digital Only) */
+  @media screen {
+    .ambient-blob {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: -1;
+      filter: blur(80px); opacity: 0.06;
+    }
+    .blob-1 { width: 400px; height: 400px; background: #FF2D2D; top: -100px; left: -100px; animation: floatBlob 12s ease-in-out infinite alternate; }
+    .blob-2 { width: 300px; height: 300px; background: #FF2D2D; bottom: 200px; right: -80px; animation: floatBlob 15s ease-in-out infinite alternate-reverse; }
+    @keyframes floatBlob { 0% { transform: translate(0,0); } 100% { transform: translate(40px, 30px); } }
+  }
+  @media print { .ambient-blob { display: none; } }
+
+  /* Legal Text */
+  .legal-block { font-size: 10px; line-height: 1.5; color: #777; text-align: justify; margin-bottom: 15px; }
+  .legal-block strong { color: #AAA; }
+</style>
+</head>
+<body>
+
+<!-- Ambient Glow Blobs (Digital Only) -->
+<div class="ambient-blob blob-1"></div>
+<div class="ambient-blob blob-2"></div>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-watermark">TRINITY</div>
+  <div class="confidential-stamp">Bureau Confidential</div>
+  <div class="confidential-stamp-corner">Confidential</div>
+  <div class="logo-container" style="margin-bottom: 10px;">
+    <img src="bureau_logo.jpg" alt="Bureau Logo" class="logo-main" style="width: 480px; height: auto;">
+  </div>
+  <h1>Bureau</h1>
+  <div class="cover-subtitle">The Doctrine</div>
+  <div class="divider divider-center"></div>
+  <div class="cover-tagline">"Silent power is the most articulate."</div>
+  <p style="font-size: 10px; letter-spacing: 3px; color: #444; margin-top: 8px;">FOUNDED BY RONIT BOSE — VERSION 1.0 — MAY 2026</p>
+  
+  <div class="confidential-footer">
+    <span>© 2026 BUREAU — PRIVATE DOCUMENT</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 2: PHILOSOPHY -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Internal</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">01 — Foundation</div>
+  <h2>Philosophy</h2>
+  <div class="divider"></div>
+
+  <p>Bureau is a modular ecosystem for the future of business. We prioritize zero-cost foundations with premium-tier results. Every element of our identity communicates silent confidence and quiet power. We believe in the marriage of classical aesthetics and agentic future-proofing.</p>
+
+  <h3>Core Brand Pillars</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Agentic Autonomy</h4>
+      <p>Empowering businesses with AI that thinks and acts. We build systems that operate independently, intelligently, and efficiently.</p>
+    </div>
+    <div class="card">
+      <h4>Technical Superiority</h4>
+      <p>Leading with technical excellence, semantic authority, and conversion optimization. Every line of code is engineered for peak performance.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 20px;">
+    <h4>Sleek Simplicity</h4>
+    <p>High complexity under the hood, clean beauty on the surface. Like a luxury watch — precision engineering behind an effortless face. We do not clutter; we clarify.</p>
+  </div>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>02</span>
+  </div>
+  <div class="confidential-footer">
+    <span>INTERNAL USE ONLY</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 3: VISUALS -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Design</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">02 — Visual Identity</div>
+  <h2>Design Systems</h2>
+  <div class="divider"></div>
+
+  <h3>The Color Palette</h3>
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch-box" style="background: #050505;"></div>
+      <div class="swatch-label">Obsidian<br>#050505</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-box" style="background: #1A1A1A;"></div>
+      <div class="swatch-label">Charcoal<br>#1A1A1A</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-box" style="background: #FF2D2D;"></div>
+      <div class="swatch-label">Crimson<br>#FF2D2D</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-box" style="background: #F5F5F0;"></div>
+      <div class="swatch-label">Bone<br>#F5F5F0</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-box" style="background: #444444;"></div>
+      <div class="swatch-label">Silver<br>#444444</div>
+    </div>
+  </div>
+
+  <h3>Typography Guidelines</h3>
+  <div style="background: #0A0A0A; padding: 25px; border-radius: 4px; border: 1px solid #1A1A1A; margin-top: 15px;">
+    <div style="font-family: 'Fondamento', serif; font-size: 36px; margin-bottom: 10px; color: #FF2D2D;">Fondamento — The Voice</div>
+    <p style="color: #666; margin-bottom: 25px;">Used exclusively for H1, H2, and high-impact H3. It represents our heritage and literary authority.</p>
+    <div style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 300; letter-spacing: 2px;">Inter — The Machine</div>
+    <p style="color: #666;">Our technical backbone. Used for all body text, UI elements, and metadata. It represents our modern, agentic precision.</p>
+  </div>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>03</span>
+  </div>
+  <div class="confidential-footer">
+    <span>INTERNAL USE ONLY</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 4: SERVICES -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Revenue</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">03 — Service Architecture</div>
+  <h2>Pricing & Services</h2>
+  <div class="divider"></div>
+
+  <p>Bureau engagements are structured to open the next door. We do not sell tasks; we sell ecosystems. Every relationship is built toward the complete Bureau integration. Our pricing reflects the high-leverage outcomes we provide.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="color: #FF2D2D; margin-top: 0; font-size: 18px; border: none;">Bureau Systems</h3>
+      <p style="color: #FFF; font-weight: 600; font-size: 14px; margin-bottom: 6px;">₹499 – ₹2,999</p>
+      <p style="font-size: 9px; color: #555; margin-bottom: 10px; letter-spacing: 2px;">ONE-TIME PURCHASE</p>
+      <p>Operational blueprints and Notion templates. The entry point for the DIY founder who needs structure.</p>
+      <p style="color: #666; font-size: 11px; margin-top: 8px; margin-bottom: 0;">Includes: CRM dashboards, project trackers, SOPs, financial models, and client onboarding flows.</p>
+    </div>
+    <div class="card">
+      <h3 style="color: #FF2D2D; margin-top: 0; font-size: 18px; border: none;">Bureau Signal</h3>
+      <p style="color: #FFF; font-weight: 600; font-size: 14px; margin-bottom: 6px;">₹5,000 – ₹12,000 / mo</p>
+      <p style="font-size: 9px; color: #555; margin-bottom: 10px; letter-spacing: 2px;">MONTHLY RETAINER</p>
+      <p>Strategy, positioning, and campaign management. The brand voice and market authority layer.</p>
+      <p style="color: #666; font-size: 11px; margin-top: 8px; margin-bottom: 0;">Includes: Content calendar, SEO audits, social copy, competitive analysis, and monthly strategy reports.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 20px;">
+    <h3 style="color: #FF2D2D; margin-top: 0; font-size: 18px; border: none;">Bureau Front</h3>
+    <p style="color: #FFF; font-weight: 600; font-size: 14px; margin-bottom: 6px;">Per Project (Bespoke)</p>
+    <p style="font-size: 9px; color: #555; margin-bottom: 10px; letter-spacing: 2px;">CUSTOM ENGAGEMENT</p>
+    <p>Bespoke web development, hosting, and AI-powered automation. The complete digital face — engineered with the same precision as everything behind it.</p>
+    <p style="color: #666; font-size: 11px; margin-top: 8px; margin-bottom: 0;">Includes: Headless sites, PWA builds, AI butler integrations, performance optimization, and ongoing hosting.</p>
+  </div>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>04</span>
+  </div>
+  <div class="confidential-footer">
+    <span>INTERNAL USE ONLY</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 5: VOICE -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Voice</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">04 — Brand Voice</div>
+  <h2>Communication</h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h4>Quietly Confident</h4>
+      <p>Bureau never shouts. We speak precisely, listen carefully, and command the room through presence, not volume. Our words are few, but they carry the weight of certainty.</p>
+    </div>
+    <div class="card">
+      <h4>Warm Authority</h4>
+      <p>Professional but never cold. Bureau writes as a considered expert speaking to a respected peer. We provide guidance, not just services.</p>
+    </div>
+    <div class="card">
+      <h4>Anglo-Indian Literary</h4>
+      <p>The weight of the Bhadralok tradition — educated, cultured, and preferring precision over cleverness. We value the legacy of intellectual rigor.</p>
+    </div>
+    <div class="card">
+      <h4>First-Person Plural</h4>
+      <p>Bureau is "we," never "I." Even as a solo operation, the brand speaks with institutional weight and collective intelligence.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 30px;">Strategic Copywriting</h3>
+  <div class="grid-2">
+    <div style="background: rgba(0, 255, 136, 0.05); padding: 15px; border-radius: 4px; border: 1px solid rgba(0, 255, 136, 0.1);">
+      <h4 style="color: #00FF88; margin-top: 0;">✓ The Standard</h4>
+      <ul style="list-style: none; font-size: 11px; color: #8A8A8A; padding-left: 0;">
+        <li style="margin-bottom: 8px;">• Precise, considered language</li>
+        <li style="margin-bottom: 8px;">• Strategic partnership positioning</li>
+        <li style="margin-bottom: 0;">• Grammatically perfect syntax</li>
+      </ul>
+    </div>
+    <div style="background: rgba(255, 45, 45, 0.05); padding: 15px; border-radius: 4px; border: 1px solid rgba(255, 45, 45, 0.1);">
+      <h4 style="color: #FF2D2D; margin-top: 0;">✗ The Rejections</h4>
+      <ul style="list-style: none; font-size: 11px; color: #8A8A8A; padding-left: 0;">
+        <li style="margin-bottom: 8px;">• No exclamation marks or emojis</li>
+        <li style="margin-bottom: 8px;">• No agency buzzwords or jargon</li>
+        <li style="margin-bottom: 0;">• Never apologize for premium value</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>05</span>
+  </div>
+  <div class="confidential-footer">
+    <span>INTERNAL USE ONLY</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 6: PRESENCE -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Presence</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">05 — Proof of Work</div>
+  <h2>Digital Channels</h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h4>Notion Showcase</h4>
+      <p>The direct conversion tool. A polished, shareable demo that shows what Bureau-built craft looks like. High utility, zero friction.</p>
+    </div>
+    <div class="card">
+      <h4>Instagram Feed</h4>
+      <p>The visual portfolio. Case studies, process reveals, and the aesthetic manifestation of Bureau. Minimalist, high-contrast, premium.</p>
+    </div>
+    <div class="card">
+      <h4>LinkedIn Authority</h4>
+      <p>Long-form systems thinking. Targeting decision-makers through operational excellence content. Positioning as a thought leader in agentic systems.</p>
+    </div>
+    <div class="card">
+      <h4>Bureau Website</h4>
+      <p>Headless, high-performance face. Focused on technical excellence and conversion optimization. The ultimate proof of technical capability.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 30px;">Channel Synergy</h3>
+  <p>All channels lead back to the **Bureau System**. We do not engage in fragmented marketing. Every post, every document, and every interaction is a deliberate brick in the foundation of the brand's authority.</p>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>06</span>
+  </div>
+  <div class="confidential-footer">
+    <span>INTERNAL USE ONLY</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 7: STRATEGY -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Strategy</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">06 — Go-to-Market</div>
+  <h2>Launch Strategy</h2>
+  <div class="divider"></div>
+
+  <div class="card" style="margin-bottom: 25px;">
+    <h4 style="color: #FF2D2D; margin-top: 0;">Primary Audience: The Ambitious Founder</h4>
+    <p>Kolkata-based business owners with 50+ staff. They have the "mess of success" and need structural clarity to scale. They value heritage, technical competence, and silent efficiency.</p>
+  </div>
+
+  <h3>The Launch Matrix</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card" style="border-left-color: #444;">
+      <h4>Phase I: Production</h4>
+      <p>Focus on creating the "Proof of Work" assets. Establish the visible standard through private showcase builds.</p>
+    </div>
+    <div class="card" style="border-left-color: #444;">
+      <h4>Phase II: Selection</h4>
+      <p>Selective outreach to curated founders for "Operational Audits." Converting high-impact pilots into long-term partners.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 20px; border-left-color: #FF2D2D;">
+    <h4>Phase III: Compound</h4>
+    <p>Scaling through reputation and high-leverage inbound leads. Transitioning from active outreach to exclusive partnership selection.</p>
+  </div>
+
+  <p style="margin-top: 40px; font-family: 'Fondamento', serif; font-size: 22px; color: #FF2D2D; text-align: center; opacity: 0.8;">
+    "Bureau does not need a hundred clients. It needs ten who tell ten more."
+  </p>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>07</span>
+  </div>
+  <div class="confidential-footer">
+    <span>INTERNAL USE ONLY</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+<!-- PAGE 8: LEGAL -->
+<div class="page">
+  <div class="confidential-stamp">Bureau Legal</div>
+  <img src="bureau_logo.jpg" alt="" class="corner-logo">
+  <div class="section-intro">07 — Legal Notice</div>
+  <h2>Confidentiality</h2>
+  <div class="divider"></div>
+
+  <div class="legal-block">
+    <strong>1. OWNERSHIP & NON-DISCLOSURE:</strong> This document is the sole proprietary property of Bureau, founded and operated by Ronit Bose. All strategies, pricing models, operational frameworks, and design systems contained herein are strictly confidential. Unauthorized disclosure to any third party is prohibited and constitutes a breach of contract.
+  </div>
+  <div class="legal-block">
+    <strong>2. INTELLECTUAL PROPERTY:</strong> The "Bureau" name, 3D "B" monogram, service architecture (Systems, Signal, Front), and the "Anglo-Indian Literary" voice framework are protected intellectual property of Ronit Bose. All rights reserved.
+  </div>
+  <div class="legal-block">
+    <strong>3. JURISDICTION:</strong> Any legal matters arising from the use or distribution of this document shall be governed by the laws of India, under the exclusive jurisdiction of the courts in Kolkata, West Bengal.
+  </div>
+  <div class="legal-block">
+    <strong>4. DOCUMENT CONTROL:</strong> This copy is classified as internal personnel material. Any reproduction, digital or print, must be authorized by Bureau administration. Unauthorized copies will be treated as a violation of confidentiality agreements.
+  </div>
+
+  <div style="margin-top: auto; border: 2px solid rgba(255, 45, 45, 0.2); padding: 30px; text-align: center; border-radius: 4px; background: rgba(255, 45, 45, 0.02);">
+    <p style="color: #FF2D2D; font-weight: 900; font-size: 18px; margin-bottom: 5px; letter-spacing: 5px;">PRIVATE & CONFIDENTIAL</p>
+    <p style="color: #555; font-size: 11px; letter-spacing: 1px;">PROPERTY OF RONIT BOSE — BUREAU © 2026</p>
+  </div>
+
+  <div class="page-number">
+    <span>Bureau — The Doctrine</span>
+    <span>08</span>
+  </div>
+  <div class="confidential-footer">
+    <span>END OF DOCUMENT</span>
+    <span class="confidential-tag">STRICTLY CONFIDENTIAL</span>
+  </div>
+</div>
+
+  <script src="anime.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Reveal pages one by one or headers?
+      // Let's do a staggered entrance for each page's content
+      
+      anime({
+        targets: '.page',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 1500,
+        delay: anime.stagger(200),
+        easing: 'easeOutExpo'
+      });
+
+      anime({
+        targets: 'h1, h2, .logo-main',
+        scale: [0.95, 1],
+        opacity: [0, 1],
+        duration: 2000,
+        delay: 500,
+        easing: 'easeOutElastic(1, .8)'
+      });
+
+      // Ambient movement for corner logos
+      anime({
+        targets: '.corner-logo',
+        translateX: [-8, 8],
+        translateY: [-8, 8],
+        duration: 6000,
+        direction: 'alternate',
+        loop: true,
+        easing: 'easeInOutSine'
+      });
+    });
+  </script>
+</body>
+</html>
