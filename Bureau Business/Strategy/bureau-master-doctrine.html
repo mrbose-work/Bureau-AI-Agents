@@ -1460,6 +1460,193 @@
         padding: 20px;
       }
     }
+
+    /* Profitability Estimator Styles */
+    .profit-estimator-container {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 40px;
+      margin: 40px 0;
+      box-shadow: 0 20px 50px var(--shadow);
+    }
+
+    .estimator-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 40px;
+    }
+
+    .tool-sections-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tool-section-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 6px;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 8px;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    body.light .tool-grid {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .tool-check-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.82rem;
+    }
+
+    .tool-check-card:hover {
+      border-color: var(--muted);
+    }
+
+    .tool-check-card.checked {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .tool-check-card input {
+      accent-color: var(--accent);
+      width: 14px;
+      height: 14px;
+    }
+
+    .tool-info {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tool-info h5 {
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .tool-cost {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    .status-badge {
+      font-size: 0.6rem;
+      padding: 1px 4px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 2px;
+      width: fit-content;
+    }
+
+    .badge-approved {
+      background: rgba(0, 230, 118, 0.1);
+      color: #00e676;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+
+    .badge-shortlist {
+      background: rgba(41, 182, 246, 0.1);
+      color: #29b6f6;
+      border: 1px solid rgba(41, 182, 246, 0.2);
+    }
+
+    /* Profit margin gauge */
+    .margin-gauge-wrapper {
+      margin-top: 15px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--line);
+      height: 22px;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body.light .margin-gauge-wrapper {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .margin-gauge-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease, background-color 0.4s ease;
+    }
+
+    .gauge-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .custom-tool-input-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .custom-tool-input-row input {
+      flex: 1;
+    }
+
+    /* Fixed select dropdown box items */
+    select.search-input option {
+      background-color: var(--card) !important;
+      color: var(--text) !important;
+    }
+
+    /* Update pricing grid columns to 3 */
+    .calc-options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .estimator-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .calc-options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1771,6 +1958,11 @@
                       <h5>Bureau Front</h5>
                       <p>Wix, Framer &amp; HTML Web</p>
                     </div>
+                    <div class="calc-radio-card" onclick="selectPractice('signal')">
+                      <input type="radio" name="practiceOpt" id="pOpt3" value="signal">
+                      <h5>Bureau Signal</h5>
+                      <p>AI Strategy &amp; Copy</p>
+                    </div>
                   </div>
                 </div>
 
@@ -1790,6 +1982,15 @@
                     <option value="basic">Standard Web Landing Page (Framer/Wix) — ₹15,000</option>
                     <option value="unified" selected>Unified Web Presence (Multi-page Web Build) — ₹30,000</option>
                     <option value="custom_html">Custom Developer-Grade Static HTML/CSS/JS — ₹45,000</option>
+                  </select>
+                </div>
+
+                <div class="calc-group" id="signalTiersBox" style="display:none;">
+                  <label>Signal Scope Level</label>
+                  <select class="search-input" id="signalTierSelect" style="padding-left:16px;" onchange="calculatePrice()">
+                    <option value="strategy">Signal Direction (Strategy Retainer / mo) — ₹12,000</option>
+                    <option value="command" selected>Signal Command (Strategy &amp; Execution Retainer / mo) — ₹30,000</option>
+                    <option value="blueprint_content">Custom Content Architecture (One-off Blueprint) — ₹18,000</option>
                   </select>
                 </div>
 
@@ -1862,6 +2063,104 @@
                       <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
                       Copy Scope Proposal Draft
                     </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategic Profitability & AI Overhead Estimator -->
+          <h3 class="block-title" style="margin-top: 60px;">Strategic Profitability &amp; AI Overhead Estimator</h3>
+          <p class="body-text">
+            Simulate your operational margins in real time. Choose which AI subscriptions and assets are active from your Notion AI audit to estimate monthly business overhead, target revenues, and take-home profit.
+          </p>
+          <div class="profit-estimator-container">
+            <div class="estimator-layout">
+              <!-- Left panel: tool toggles -->
+              <div class="tool-sections-wrapper">
+                <div>
+                  <div class="tool-section-title">Approved &amp; Active Subscriptions</div>
+                  <div class="tool-grid" id="approvedToolsGrid">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+
+                <div>
+                  <div class="tool-section-title">Shortlisted &amp; Optional Tooling</div>
+                  <div class="tool-grid" id="shortlistToolsGrid">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+
+                <div>
+                  <div class="tool-section-title">Free &amp; Sponsored Infrastructure</div>
+                  <div class="tool-grid" id="freeToolsGrid">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+
+                <div>
+                  <div class="tool-section-title">Add Custom Business Overhead</div>
+                  <div class="custom-tool-input-row">
+                    <input type="text" class="search-input" style="padding-left:16px;" id="customToolName" placeholder="e.g., Office space, Canva Pro">
+                    <input type="number" class="search-input" style="padding-left:16px; max-width: 140px;" id="customToolCost" placeholder="Cost (₹/mo)">
+                    <button class="utility-btn" style="background:var(--accent); border:none; color:white; padding: 12px 20px;" onclick="addCustomTool()">Add</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right panel: revenue calculations -->
+              <div class="calc-results">
+                <h4>Financial Model</h4>
+                <div class="price-summary-box">
+                  <div class="calc-group" style="margin-bottom:15px;">
+                    <label>Monthly Target Revenue (₹)</label>
+                    <input type="number" class="search-input" style="padding-left:16px; font-size:1.1rem; font-weight:600;" id="targetRevenueInput" value="100000" oninput="calculateProfitability()">
+                  </div>
+
+                  <div class="calc-group" style="margin-bottom:15px;">
+                    <label>Other Monthly Expenses (₹)</label>
+                    <input type="number" class="search-input" style="padding-left:16px;" id="otherExpensesInput" value="15000" oninput="calculateProfitability()">
+                  </div>
+
+                  <div style="border-top: 1px solid var(--line); padding-top:16px; display:flex; flex-direction:column; gap:12px;">
+                    <div class="meta-detail-row">
+                      <span class="meta-detail-label">AI Tooling Overhead:</span>
+                      <span class="meta-detail-val" id="modelAiOverhead">₹0</span>
+                    </div>
+                    <div class="meta-detail-row" style="border-bottom: 1px solid var(--line); padding-bottom:12px;">
+                      <span class="meta-detail-label">Other Expenses:</span>
+                      <span class="meta-detail-val" id="modelOtherExpenses">₹15,000</span>
+                    </div>
+                    <div class="total-price-row" style="border:none; padding:0; align-items:center;">
+                      <span class="total-price-label" style="font-weight:600; color:var(--text);">Net Monthly Profit</span>
+                      <span class="total-price-val" style="font-size:2rem;" id="modelNetProfit">₹85,000</span>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:10px;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight:600;">Net Profit Margin</label>
+                    <div class="margin-gauge-wrapper">
+                      <div class="margin-gauge-fill" id="profitMarginGauge" style="width: 85%; background: #00e676;"></div>
+                      <div class="gauge-label" id="profitMarginLabel">85%</div>
+                    </div>
+                  </div>
+
+                  <div class="calc-meta-details" style="margin-top:15px;">
+                    <div class="meta-detail-row">
+                      <span class="meta-detail-label">Breakeven Target:</span>
+                      <span class="meta-detail-val" style="color:var(--accent); font-weight:600;" id="modelBreakeven">₹15,000 / mo</span>
+                    </div>
+                  </div>
+
+                  <div class="callout" style="margin:10px 0 0; padding:15px; border-radius:10px; background:rgba(255,255,255,0.01);">
+                    <div class="callout-title" style="font-size:0.95rem; margin-bottom:4px;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      Alfred's Strategic Briefing
+                    </div>
+                    <div class="callout-content" style="font-size:0.82rem; line-height:1.5;" id="alfredFinancialAdvice">
+                      Calculating margin...
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2583,6 +2882,10 @@
       
       // Load saved SOP checklists
       loadSopsCache();
+
+      // Initialize AI Tools & Profitability Estimator
+      renderTools();
+      calculateProfitability();
     });
 
     // Theme switch toggle
@@ -2668,7 +2971,6 @@
             card.style.opacity = '0.35';
             card.style.transform = 'scale(0.97)';
             card.style.borderColor = 'var(--line)';
-          }
         } else {
           // Reset card layouts
           card.style.opacity = '1';
@@ -2700,13 +3002,9 @@
         }
       });
 
-      if (practice === 'systems') {
-        document.getElementById('systemsTiersBox').style.display = 'block';
-        document.getElementById('frontTiersBox').style.display = 'none';
-      } else {
-        document.getElementById('systemsTiersBox').style.display = 'none';
-        document.getElementById('frontTiersBox').style.display = 'block';
-      }
+      document.getElementById('systemsTiersBox').style.display = (practice === 'systems') ? 'block' : 'none';
+      document.getElementById('frontTiersBox').style.display = (practice === 'front') ? 'block' : 'none';
+      document.getElementById('signalTiersBox').style.display = (practice === 'signal') ? 'block' : 'none';
 
       calculatePrice();
     }
@@ -2745,10 +3043,10 @@
           timeline = "3 - 4 Weeks";
         } else if (tier === 'custom') {
           basePrice = 48000;
-          desc = "Custom System (Flagship corporate hub with CRM, task pipelines, and SOP wiki)";
+          desc = "Custom System (Flagship Enterprise Hub) — ₹48,000";
           timeline = "4 - 6 Weeks";
         }
-      } else {
+      } else if (activePractice === 'front') {
         const tier = document.getElementById('frontTierSelect').value;
         if (tier === 'basic') {
           basePrice = 15000;
@@ -2762,6 +3060,21 @@
           basePrice = 45000;
           desc = "Custom Developer-Grade Static HTML/CSS/JS (High performance, responsive custom code)";
           timeline = "4 Weeks";
+        }
+      } else if (activePractice === 'signal') {
+        const tier = document.getElementById('signalTierSelect').value;
+        if (tier === 'strategy') {
+          basePrice = 12000;
+          desc = "Signal Direction (Strategy Retainer: Brand positioning roadmap, monthly keywords, SEO content briefs)";
+          timeline = "Monthly Retainer";
+        } else if (tier === 'command') {
+          basePrice = 30000;
+          desc = "Signal Command (Execution Retainer: Copywriting for 3 social posts/week, 2 SEO blog posts/mo, scheduling & analytics)";
+          timeline = "Monthly Retainer";
+        } else if (tier === 'blueprint_content') {
+          basePrice = 18000;
+          desc = "Custom Content Architecture (One-off blueprint detailing niche keywords, competitor audits, and content frameworks)";
+          timeline = "2 Weeks";
         }
       }
 
@@ -2784,13 +3097,18 @@
         document.getElementById('midMilestoneRow').style.display = 'none';
         document.getElementById('finalMilestoneLabel').textContent = "Completion Handoff";
         document.getElementById('calcMilestone3').textContent = "₹0";
+      } else if (timeline === "Monthly Retainer") {
+        document.getElementById('calcMilestone1').textContent = '₹' + totalPrice.toLocaleString('en-IN');
+        document.getElementById('midMilestoneRow').style.display = 'none';
+        document.getElementById('finalMilestoneLabel').textContent = "Billing Terms (Advance)";
+        document.getElementById('calcMilestone3').textContent = "₹" + totalPrice.toLocaleString('en-IN') + " / month";
       } else {
         document.getElementById('midMilestoneRow').style.display = 'flex';
         document.getElementById('finalMilestoneLabel').textContent = "Milestone 3: Final Handover (25%)";
         
         const m1 = Math.round(totalPrice * 0.5);
         const m2 = Math.round(totalPrice * 0.25);
-        const m3 = totalPrice - m1 - m2; // account for rounding oddities
+        const m3 = totalPrice - m1 - m2;
 
         document.getElementById('calcMilestone1').textContent = '₹' + m1.toLocaleString('en-IN');
         document.getElementById('calcMilestone2').textContent = '₹' + m2.toLocaleString('en-IN');
@@ -2813,13 +3131,14 @@ Estimated Timeline: ${timeline}
 Total Investment: ${total} (Value-Based Fixed Price)
 
 PAYMENT SCHEDULE & MILESTONES:
-- Milestone 1: 50% Deposit upon signing: ${m1}
 `;
 
-      if (timeline !== "Instant Delivery") {
-        draft += `- Milestone 2: 25% on Systems Architecture Sign-off: ${m2}\n- Milestone 3: 25% on Website Launch / Live Transfer: ${m3}`;
+      if (timeline === "Instant Delivery") {
+        draft += `- Milestone 1: 100% upfront: ${m1}`;
+      } else if (timeline === "Monthly Retainer") {
+        draft += `- Retainer Billing: ${m1} paid monthly in advance (due on 1st, paused if unpaid by 7th)`;
       } else {
-        draft += `- Milestone 2: 50% on template handover: ${m1}`;
+        draft += `- Milestone 1: 50% Deposit upon signing: ${m1}\n- Milestone 2: 25% on Systems/Site Architecture Sign-off: ${m2}\n- Milestone 3: 25% on Website Launch / Live Transfer: ${m3}`;
       }
 
       draft += `\n\nTo accept this proposed scope, reply indicating confirmation or request custom agreement terms.`;
@@ -2828,11 +3147,179 @@ PAYMENT SCHEDULE & MILESTONES:
       alert("Calculator scope proposal copied to clipboard!");
     }
 
+    // STRATEGIC PROFITABILITY & AI OVERHEAD ESTIMATOR JS
+    const aiToolsAudited = [
+      { id: "tool_google_credits", name: "Google AI Credits", cost: 0, cycle: "Monthly", status: "Paused", decision: "Shortlist", category: "Other", usage: "Internal" },
+      { id: "tool_google_pro", name: "Google AI Pro", cost: 0, cycle: "Monthly", status: "Free / Sponsored", decision: "Approved", category: "Other", usage: "Internal", checked: true },
+      { id: "tool_lovart", name: "Lovart", cost: 2000, cycle: "Monthly", status: "Paying", decision: "Approved", category: "Design/Creative", usage: "Both", checked: true },
+      { id: "tool_endless_tools", name: "Endless Tools", cost: 5000, cycle: "Monthly", status: "", decision: "Shortlist", category: "Design/Creative", usage: "Internal" },
+      { id: "tool_n8n", name: "n8n", cost: 2400, cycle: "Monthly", status: "", decision: "Shortlist", category: "Automation", usage: "Internal" },
+      { id: "tool_morphic", name: "Morphic", cost: 3000, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "Design/Creative", usage: "Internal" },
+      { id: "tool_ltx_studio", name: "LTX Studio", cost: 1500, cycle: "Monthly", status: "", decision: "Shortlist", category: "Design/Creative", usage: "Internal" },
+      { id: "tool_make", name: "Make", cost: 2000, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "Automation", usage: "Internal" },
+      { id: "tool_wix", name: "Wix", cost: 590, cycle: "Annual", status: "Paying", decision: "Shortlist", category: "Website", usage: "Internal" },
+      { id: "tool_hostinger", name: "Hostinger", cost: 258, cycle: "Annual", status: "", decision: "Shortlist", category: "Web Hosting", usage: "Both" },
+      { id: "tool_vercel", name: "Vercel", cost: 2000, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "Web Hosting", usage: "Internal" },
+      { id: "tool_framer", name: "Framer", cost: 4500, cycle: "Monthly", status: "Paying", decision: "Approved", category: "Website", usage: "Internal", checked: true },
+      { id: "tool_leonardo", name: "Leonardo AI", cost: 1500, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "Design/Creative", usage: "Internal" },
+      { id: "tool_madgicx", name: "Madgicx AI", cost: 4500, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "Ad Run", usage: "Client" },
+      { id: "tool_replit", name: "Replit", cost: 2500, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "App", usage: "Internal" },
+      { id: "tool_apify", name: "Apify", cost: 0, cycle: "Monthly", status: "", decision: "Shortlist", category: "Automation", usage: "Both" },
+      { id: "tool_luma", name: "Luma AI", cost: 2000, cycle: "Monthly", status: "Paying", decision: "Shortlist", category: "Design/Creative", usage: "Both" },
+      { id: "tool_julius", name: "Julius AI", cost: 1500, cycle: "Monthly", status: "", decision: "Shortlist", category: "Other", usage: "Client" },
+      { id: "tool_notion_biz", name: "Notion Business", cost: 0, cycle: "Annual", status: "Free / Sponsored", decision: "Approved", category: "PM/Docs", usage: "Both", checked: true },
+      { id: "tool_claude_pro", name: "Claude Pro", cost: 2000, cycle: "Monthly", status: "Paying", decision: "Approved", category: "Writing/LLM", usage: "Both", checked: true },
+      { id: "tool_perplexity_pro", name: "Perplexity Pro", cost: 1667, cycle: "Annual", status: "Paying", decision: "Approved", category: "Research", usage: "Internal", checked: true },
+      { id: "tool_zapier", name: "Zapier", cost: 3401, cycle: "Monthly", status: "", decision: "Shortlist", category: "Automation", usage: "Both" },
+      { id: "tool_higgsfield", name: "Higgsfield", cost: 4424, cycle: "Monthly", status: "Paying", decision: "Approved", category: "Design/Creative", usage: "Both", checked: true }
+    ];
+
+    function renderTools() {
+      const approvedGrid = document.getElementById('approvedToolsGrid');
+      const shortlistGrid = document.getElementById('shortlistToolsGrid');
+      const freeGrid = document.getElementById('freeToolsGrid');
+
+      approvedGrid.innerHTML = '';
+      shortlistGrid.innerHTML = '';
+      freeGrid.innerHTML = '';
+
+      aiToolsAudited.forEach(tool => {
+        const checkedAttr = tool.checked ? 'checked' : '';
+        const checkedClass = tool.checked ? 'checked' : '';
+        
+        let badgeClass = 'badge-shortlist';
+        if (tool.decision === 'Approved' || tool.decision === 'Subscribed') {
+          badgeClass = 'badge-approved';
+        }
+
+        const cardHtml = `
+          <div class="tool-check-card ${checkedClass}" data-tool-id="${tool.id}" onclick="toggleToolCard('${tool.id}')">
+            <input type="checkbox" id="check_${tool.id}" ${checkedAttr} onclick="event.stopPropagation(); toggleToolCard('${tool.id}')">
+            <div class="tool-info">
+              <h5>${tool.name}</h5>
+              <span class="status-badge ${badgeClass}">${tool.decision}</span>
+            </div>
+            <div class="tool-cost">₹${tool.cost.toLocaleString('en-IN')}</div>
+          </div>
+        `;
+
+        if (tool.cost === 0 || tool.status.includes('Free') || tool.status.includes('Sponsored')) {
+          freeGrid.insertAdjacentHTML('beforeend', cardHtml);
+        } else if (tool.decision === 'Approved' || tool.decision === 'Subscribed') {
+          approvedGrid.insertAdjacentHTML('beforeend', cardHtml);
+        } else {
+          shortlistGrid.insertAdjacentHTML('beforeend', cardHtml);
+        }
+      });
+    }
+
+    function toggleToolCard(toolId) {
+      const tool = aiToolsAudited.find(t => t.id === toolId);
+      if (!tool) return;
+      
+      tool.checked = !tool.checked;
+      
+      const card = document.querySelector(`[data-tool-id="${toolId}"]`);
+      const checkbox = document.getElementById(`check_${toolId}`);
+      
+      if (tool.checked) {
+        card.classList.add('checked');
+        checkbox.checked = true;
+      } else {
+        card.classList.remove('checked');
+        checkbox.checked = false;
+      }
+
+      calculateProfitability();
+    }
+
+    function addCustomTool() {
+      const nameInput = document.getElementById('customToolName');
+      const costInput = document.getElementById('customToolCost');
+      
+      const name = nameInput.value.trim();
+      const cost = parseInt(costInput.value) || 0;
+      
+      if (!name) {
+        alert("Please enter a tool or expense name.");
+        return;
+      }
+
+      const newId = 'custom_' + Date.now();
+      const newTool = {
+        id: newId,
+        name: name,
+        cost: cost,
+        cycle: "Monthly",
+        status: "Paying",
+        decision: "Approved",
+        category: "Other",
+        usage: "Internal",
+        checked: true
+      };
+
+      aiToolsAudited.push(newTool);
+      renderTools();
+      calculateProfitability();
+
+      // Reset inputs
+      nameInput.value = '';
+      costInput.value = '';
+    }
+
+    function calculateProfitability() {
+      let aiOverhead = 0;
+      aiToolsAudited.forEach(tool => {
+        if (tool.checked) {
+          aiOverhead += tool.cost;
+        }
+      });
+
+      const revenue = parseInt(document.getElementById('targetRevenueInput').value) || 0;
+      const otherExpenses = parseInt(document.getElementById('otherExpensesInput').value) || 0;
+      
+      const totalExpenses = aiOverhead + otherExpenses;
+      const netProfit = revenue - totalExpenses;
+      
+      let profitMargin = 0;
+      if (revenue > 0) {
+        profitMargin = Math.round((netProfit / revenue) * 100);
+      }
+
+      // Update UI texts
+      document.getElementById('modelAiOverhead').textContent = '₹' + aiOverhead.toLocaleString('en-IN');
+      document.getElementById('modelOtherExpenses').textContent = '₹' + otherExpenses.toLocaleString('en-IN');
+      document.getElementById('modelNetProfit').textContent = '₹' + netProfit.toLocaleString('en-IN');
+      document.getElementById('modelBreakeven').textContent = '₹' + totalExpenses.toLocaleString('en-IN') + ' / mo';
+      
+      // Update Gauge
+      const gaugeFill = document.getElementById('profitMarginGauge');
+      const gaugeLabel = document.getElementById('profitMarginLabel');
+      
+      // Clamp gauge width between 0 and 100
+      const displayMargin = Math.max(0, Math.min(100, profitMargin));
+      gaugeFill.style.width = displayMargin + '%';
+      gaugeLabel.textContent = profitMargin + '%';
+
+      // Update Gauge Color and Alfred advice based on profitability tier
+      let advice = '';
+      if (profitMargin >= 65) {
+        gaugeFill.style.backgroundColor = '#00e676'; // Emerald Green
+        advice = `"Operational leverage is outstanding. At a ${profitMargin}% margin, your subscriptions act as highly efficient force-multipliers. Keep system overhead under control and scale client acquisition."`;
+      } else if (profitMargin >= 40) {
+        gaugeFill.style.backgroundColor = '#ffb74d'; // Gold/Orange
+        advice = `"A healthy ${profitMargin}% margin. Your business covers overhead smoothly, but consider checking if all shortlisted tools are contributing directly to client billing or operations. Keep an eye on expenses."`;
+      } else {
+        gaugeFill.style.backgroundColor = '#ff2d2d'; // Crimson Red
+        advice = `"Warning: Profit margin has dropped to ${profitMargin}%. Subscriptions and other expenses consume too much of your target revenue. I recommend consolidating duplicate tools (e.g., check design tools list) or increasing your target project pricing."`;
+      }
+      
+      document.getElementById('alfredFinancialAdvice').textContent = advice;
+    }
+
     // INTERACTIVE SOP CHECKLIST CACHE & PROGRESS SCRIPTS
     function toggleSopExpand(cardId) {
       document.getElementById(cardId).classList.toggle('expanded');
-    }
-
     function toggleSopTask(taskEl, taskId) {
       event.stopPropagation(); // prevent collapsing the header
       
