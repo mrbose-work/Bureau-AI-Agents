@@ -2001,6 +2001,32 @@
             </div>
           </div>
 
+          <h3 class="block-title">Alfred's Legal Guide: MSA Terms in Plain English</h3>
+          <div class="callout" style="border-left-color: #00e676; background: rgba(0, 230, 118, 0.02); margin-bottom: 40px;">
+            <div class="callout-title" style="color: #00e676;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:#00e676;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Plain-English Breakdown of Indian Contract Laws &amp; Clauses
+            </div>
+            <div class="callout-content" style="font-size:0.92rem; line-height:1.6; display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:10px;">
+              <div>
+                <strong style="color:var(--text); display:block; margin-bottom:4px;">1. Capping Your Liability (Section 73 of ICA)</strong>
+                Under the <em>Indian Contract Act, 1872</em>, if a client suffers loss due to a bug or server failure on a website you built, they could theoretically sue you for massive damages (e.g. ₹5 lakhs in lost revenue). Capping your liability to the project fee (e.g. ₹55,000) prevents this. It states you are not liable for remote server downtime (Notion, Framer, Wix) or lost profits.
+              </div>
+              <div>
+                <strong style="color:var(--text); display:block; margin-bottom:4px;">2. Defining IP Boundaries (Section 17 of ICA 1957)</strong>
+                Under the <em>Indian Copyright Act, 1957</em>, unless agreed otherwise, work done for hire belongs to the client. We clarify that the client owns the final custom database entries and visual files, but <strong>Bureau retains ownership</strong> of the underlying template logic, relational schemas, code structures, and formulas. They get a license to use it internally, but they cannot resell your templates.
+              </div>
+              <div>
+                <strong style="color:var(--text); display:block; margin-bottom:4px;">3. Service Suspension (Invoicing Protection)</strong>
+                If a client defaults on payment, you have the legal right to pause work immediately. Our delinquency policy explicitly gives Bureau the right to revoke sandboxes, staging links, and content pipelines after 7 business days of non-payment, preventing you from getting trapped in unpaid labor.
+              </div>
+              <div>
+                <strong style="color:var(--text); display:block; margin-bottom:4px;">4. Governing Law &amp; Jurisdiction (Kolkata)</strong>
+                It designates Kolkata courts as the exclusive forum for any disputes. This prevents a client from filing a legal claim in another state/city, forcing them to resolve any issues in your home territory under West Bengal local jurisdiction.
+              </div>
+            </div>
+          </div>
+
           <!-- Interactive Calculator -->
           <h3 class="block-title">Interactive Pricing &amp; Scope Architect</h3>
           <div class="calculator-container">
@@ -2136,41 +2162,63 @@
           <!-- Strategic Profitability & AI Overhead Estimator -->
           <h3 class="block-title" style="margin-top: 60px;">Strategic Profitability &amp; AI Overhead Estimator</h3>
           <p class="body-text">
-            Simulate your operational margins in real time. Choose which AI subscriptions and assets are active from your Notion AI audit to estimate monthly business overhead, target revenues, and take-home profit.
+            Simulate your operational margins in real time. Select quick presets or slide to adjust your expenses. Hide individual items to reduce chaos.
           </p>
           <div class="profit-estimator-container">
             <div class="estimator-layout">
-              <!-- Left panel: tool toggles -->
+              <!-- Left panel: presets and details -->
               <div class="tool-sections-wrapper">
-                <div>
-                  <div class="tool-section-title">Approved &amp; Active Subscriptions</div>
-                  <div class="tool-grid" id="approvedToolsGrid">
-                    <!-- Loaded dynamically via JS -->
+                
+                <!-- Quick Preset Selectors -->
+                <div style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); padding: 20px; border-radius: 16px;">
+                  <div class="tool-section-title" style="margin-bottom: 12px; border:none; padding:0;">Quick Stack Presets</div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px;" onclick="applyPreset('flagship')">Flagship Stack (₹14,591)</button>
+                    <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px;" onclick="applyPreset('bootstrap')">Bootstrap Minimal (₹2,000)</button>
+                    <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px;" onclick="applyPreset('powerhouse')">Powerhouse Max (₹32,000+)</button>
+                    <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px; border-color:var(--accent); color:var(--accent);" onclick="applyPreset('none')">Deselect All</button>
                   </div>
                 </div>
 
-                <div>
-                  <div class="tool-section-title">Shortlisted &amp; Optional Tooling</div>
-                  <div class="tool-grid" id="shortlistToolsGrid">
-                    <!-- Loaded dynamically via JS -->
-                  </div>
-                </div>
+                <!-- Accordion details folder to hide chaotic checklists -->
+                <details style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); padding: 18px; border-radius: 16px;">
+                  <summary style="cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--text); outline: none; user-select: none;">
+                    Inspect &amp; Toggle Individual Tools Checklists (23 items)
+                  </summary>
+                  
+                  <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                      <div class="tool-section-title">Approved &amp; Active Subscriptions</div>
+                      <div class="tool-grid" id="approvedToolsGrid">
+                        <!-- Loaded dynamically via JS -->
+                      </div>
+                    </div>
 
-                <div>
-                  <div class="tool-section-title">Free &amp; Sponsored Infrastructure</div>
-                  <div class="tool-grid" id="freeToolsGrid">
-                    <!-- Loaded dynamically via JS -->
-                  </div>
-                </div>
+                    <div>
+                      <div class="tool-section-title">Shortlisted &amp; Optional Tooling</div>
+                      <div class="tool-grid" id="shortlistToolsGrid">
+                        <!-- Loaded dynamically via JS -->
+                      </div>
+                    </div>
 
-                <div>
-                  <div class="tool-section-title">Add Custom Business Overhead</div>
-                  <div class="custom-tool-input-row">
-                    <input type="text" class="search-input" style="padding-left:16px;" id="customToolName" placeholder="e.g., Office space, Canva Pro">
-                    <input type="number" class="search-input" style="padding-left:16px; max-width: 140px;" id="customToolCost" placeholder="Cost (₹/mo)">
-                    <button class="utility-btn" style="background:var(--accent); border:none; color:white; padding: 12px 20px;" onclick="addCustomTool()">Add</button>
+                    <div>
+                      <div class="tool-section-title">Free &amp; Sponsored Infrastructure</div>
+                      <div class="tool-grid" id="freeToolsGrid">
+                        <!-- Loaded dynamically via JS -->
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="tool-section-title">Add Custom Business Overhead</div>
+                      <div class="custom-tool-input-row">
+                        <input type="text" class="search-input" style="padding-left:16px;" id="customToolName" placeholder="e.g., Office space, Canva Pro">
+                        <input type="number" class="search-input" style="padding-left:16px; max-width: 140px;" id="customToolCost" placeholder="Cost (₹/mo)">
+                        <button class="utility-btn" style="background:var(--accent); border:none; color:white; padding: 12px 20px;" onclick="addCustomTool()">Add</button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </details>
+
               </div>
 
               <!-- Right panel: revenue calculations -->
@@ -2182,9 +2230,44 @@
                     <input type="number" class="search-input" style="padding-left:16px; font-size:1.1rem; font-weight:600;" id="targetRevenueInput" value="100000" oninput="calculateProfitability()">
                   </div>
 
-                  <div class="calc-group" style="margin-bottom:15px;">
-                    <label>Other Monthly Expenses (₹)</label>
-                    <input type="number" class="search-input" style="padding-left:16px;" id="otherExpensesInput" value="15000" oninput="calculateProfitability()">
+                  <!-- Interactive Expenses Sliders Breakdown -->
+                  <div class="calc-group" style="margin-bottom:15px; background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); padding: 18px; border-radius: 16px;">
+                    <label style="color:var(--text); font-weight:600; margin-bottom:12px; display:block; border:none; padding:0; text-transform:none; letter-spacing:normal;">Operational Expenses Breakdown</label>
+                    
+                    <div style="margin-bottom: 12px;">
+                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                        <span>Rent &amp; Workspace</span>
+                        <span id="label_exp_rent" style="color:var(--accent); font-weight:600;">₹5,000</span>
+                      </div>
+                      <input type="range" id="exp_rent" min="0" max="50000" step="1000" value="5000" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                        <span>Internet &amp; Utilities</span>
+                        <span id="label_exp_net" style="color:var(--accent); font-weight:600;">₹1,500</span>
+                      </div>
+                      <input type="range" id="exp_net" min="500" max="5000" step="100" value="1500" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                        <span>Taxes &amp; Professional Fees</span>
+                        <span id="label_exp_tax" style="color:var(--accent); font-weight:600;">₹3,500</span>
+                      </div>
+                      <input type="range" id="exp_tax" min="0" max="20000" step="500" value="3500" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                        <span>Marketing &amp; Growth Spend</span>
+                        <span id="label_exp_mkt" style="color:var(--accent); font-weight:600;">₹5,000</span>
+                      </div>
+                      <input type="range" id="exp_mkt" min="0" max="30000" step="1000" value="5000" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                    </div>
+
+                    <!-- Hidden input to maintain compatibility with calculateProfitability -->
+                    <input type="hidden" id="otherExpensesInput" value="15000">
                   </div>
 
                   <div style="border-top: 1px solid var(--line); padding-top:16px; display:flex; flex-direction:column; gap:12px;">
@@ -3092,7 +3175,7 @@
 
       // Initialize AI Tools & Profitability Estimator
       renderTools();
-      calculateProfitability();
+      updateOtherExpenses();
     });
 
     // Theme switch toggle
@@ -3473,6 +3556,42 @@ PAYMENT SCHEDULE & MILESTONES:
       // Reset inputs
       nameInput.value = '';
       costInput.value = '';
+    }
+
+    function applyPreset(presetType) {
+      aiToolsAudited.forEach(tool => {
+        if (presetType === 'flagship') {
+          const flagshipIds = ['tool_google_pro', 'tool_lovart', 'tool_framer', 'tool_notion_biz', 'tool_claude_pro', 'tool_perplexity_pro', 'tool_higgsfield'];
+          tool.checked = flagshipIds.includes(tool.id);
+        } else if (presetType === 'bootstrap') {
+          const bootstrapIds = ['tool_google_pro', 'tool_notion_biz', 'tool_claude_pro'];
+          tool.checked = bootstrapIds.includes(tool.id);
+        } else if (presetType === 'powerhouse') {
+          const excludeIds = ['tool_google_credits', 'tool_endless_tools', 'tool_ltx_studio'];
+          tool.checked = !excludeIds.includes(tool.id);
+        } else if (presetType === 'none') {
+          tool.checked = false;
+        }
+      });
+      renderTools();
+      calculateProfitability();
+    }
+
+    function updateOtherExpenses() {
+      const rent = parseInt(document.getElementById('exp_rent').value) || 0;
+      const net = parseInt(document.getElementById('exp_net').value) || 0;
+      const tax = parseInt(document.getElementById('exp_tax').value) || 0;
+      const mkt = parseInt(document.getElementById('exp_mkt').value) || 0;
+      
+      document.getElementById('label_exp_rent').textContent = '₹' + rent.toLocaleString('en-IN');
+      document.getElementById('label_exp_net').textContent = '₹' + net.toLocaleString('en-IN');
+      document.getElementById('label_exp_tax').textContent = '₹' + tax.toLocaleString('en-IN');
+      document.getElementById('label_exp_mkt').textContent = '₹' + mkt.toLocaleString('en-IN');
+      
+      const total = rent + net + tax + mkt;
+      document.getElementById('otherExpensesInput').value = total;
+      
+      calculateProfitability();
     }
 
     function calculateProfitability() {
