@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Bureau — Quiet systems for a well-run life and business." />
+  <meta property="og:title" content="Bureau" />
+  <meta property="og:description" content="Quiet systems for a well-run life and business." />
+  <title>Bureau — The Doctrine</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fondamento&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+:root{
+  --bg:#050505;
+  --surface:#0f0f0f;
+  --card:#121212;
+  --line:rgba(255,255,255,.08);
+  --text:#f5f5f0;
+  --muted:rgba(245,245,240,.62);
+  --accent:#ff2d2d;
+  --accent-soft:rgba(255,45,45,.12);
+  --glass:rgba(255,255,255,.03);
+}
+
+body.light{
+  --bg:#f4f1ea;
+  --surface:#ffffff;
+  --card:#faf7f2;
+  --line:rgba(0,0,0,.08);
+  --text:#111111;
+  --muted:rgba(0,0,0,.62);
+  --glass:rgba(0,0,0,.03);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:
+    radial-gradient(circle at top left, rgba(255,45,45,.08), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(255,255,255,.04), transparent 25%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,sans-serif;
+  overflow-x:hidden;
+  transition:.4s ease;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size:50px 50px;
+  pointer-events:none;
+  opacity:.25;
+  z-index:-1;
+}
+
+.progress{
+  position:fixed;
+  top:0;
+  left:0;
+  height:3px;
+  width:0;
+  background:linear-gradient(90deg,var(--accent),#ff7b7b);
+  z-index:9999;
+  box-shadow:0 0 20px rgba(255,45,45,.7);
+}
+
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:1000;
+  backdrop-filter:blur(20px);
+  background:rgba(5,5,5,.55);
+  border-bottom:1px solid var(--line);
+}
+
+.nav-inner{
+  max-width:1400px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 30px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  filter:drop-shadow(0 0 18px rgba(255,0,0,.4));
+}
+
+.brand h1{
+  font-family:Fondamento,serif;
+  letter-spacing:.08em;
+  font-size:1.3rem;
+}
+
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.nav-links a,
+.toggle{
+  color:var(--text);
+  text-decoration:none;
+  border:1px solid var(--line);
+  padding:10px 16px;
+  border-radius:999px;
+  background:var(--glass);
+  transition:.3s ease;
+  font-size:.85rem;
+}
+
+.nav-links a:hover,
+.toggle:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,45,45,.5);
+  box-shadow:0 0 20px rgba(255,45,45,.15);
+}
+
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  position:relative;
+  padding:140px 24px 80px;
+}
+
+.hero::after{
+  content:'';
+  position:absolute;
+  width:700px;
+  height:700px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,45,45,.12), transparent 70%);
+  filter:blur(40px);
+  z-index:-1;
+  animation:pulse 6s infinite ease-in-out;
+}
+
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
+
+.hero-logo{
+  width:min(360px,70vw);
+  margin-bottom:30px;
+  filter:drop-shadow(0 0 35px rgba(255,0,0,.3));
+  animation:float 7s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.35em;
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:20px;
+}
+
+.hero h2{
+  font-family:Fondamento,serif;
+  font-size:clamp(3rem,7vw,7rem);
+  line-height:1;
+  max-width:1000px;
+  margin-bottom:24px;
+}
+
+.hero p{
+  max-width:850px;
+  font-size:1.15rem;
+  color:var(--muted);
+  line-height:1.9;
+}
+
+.hero-actions{
+  display:flex;
+  gap:18px;
+  margin-top:40px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.btn{
+  padding:14px 24px;
+  border-radius:999px;
+  text-decoration:none;
+  color:var(--text);
+  border:1px solid var(--line);
+  transition:.35s ease;
+  background:var(--glass);
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,var(--accent),#8a0000);
+  border:none;
+}
+
+.btn:hover{
+  transform:translateY(-3px) scale(1.02);
+}
+
+section{
+  max-width:1400px;
+  margin:auto;
+  padding:120px 30px;
+  position:relative;
+}
+
+.section-head{
+  margin-bottom:60px;
+}
+
+.section-kicker{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.3em;
+  font-size:.78rem;
+  margin-bottom:16px;
+}
+
+section h3{
+  font-family:Fondamento,serif;
+  font-size:clamp(2.2rem,5vw,4.5rem);
+  margin-bottom:16px;
+}
+
+.lead{
+  max-width:900px;
+  color:var(--muted);
+  line-height:1.9;
+  font-size:1.05rem;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;
+}
+
+.card{
+  position:relative;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+  border:1px solid var(--line);
+  padding:30px;
+  border-radius:28px;
+  overflow:hidden;
+  transition:.4s ease;
+  backdrop-filter:blur(18px);
+}
+
+.card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg, rgba(255,45,45,.09), transparent 35%);
+  opacity:0;
+  transition:.4s ease;
+}
+
+.card:hover::before{
+  opacity:1;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(255,45,45,.35);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.card h4{
+  font-family:Fondamento,serif;
+  font-size:1.6rem;
+  margin-bottom:18px;
+}
+
+.card p,
+.card li{
+  color:var(--muted);
+  line-height:1.9;
+}
+
+.card ul{
+  list-style:none;
+}
+
+.card li{
+  margin-bottom:10px;
+  position:relative;
+  padding-left:18px;
+}
+
+.card li::before{
+  content:'◆';
+  color:var(--accent);
+  position:absolute;
+  left:0;
+  top:0;
+  font-size:.65rem;
+}
+
+.manifesto{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+}
+
+.manifesto div{
+  border:1px solid var(--line);
+  padding:30px;
+  border-radius:22px;
+  background:var(--glass);
+  font-size:1.05rem;
+  line-height:1.8;
+  transition:.35s ease;
+}
+
+.manifesto div:hover{
+  transform:scale(1.03);
+  border-color:rgba(255,45,45,.4);
+}
+
+.pricing-table{
+  overflow:auto;
+  border-radius:24px;
+  border:1px solid var(--line);
+  background:var(--glass);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:24px;
+  text-align:left;
+  border-bottom:1px solid var(--line);
+}
+
+th{
+  background:rgba(255,255,255,.04);
+}
+
+tr:hover{
+  background:rgba(255,45,45,.04);
+}
+
+footer{
+  padding:120px 30px;
+  text-align:center;
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg, transparent, rgba(255,255,255,.02));
+}
+
+footer h4{
+  font-family:Fondamento,serif;
+  font-size:3rem;
+  margin-bottom:12px;
+}
+
+footer p{
+  color:var(--muted);
+}
+
+.fade{
+  opacity:0;
+  transform:translateY(40px);
+  transition:1s ease;
+}
+
+.fade.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media(max-width:900px){
+  .nav-inner{
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .hero h2{
+    font-size:3.2rem;
+  }
+
+  section{
+    padding:90px 20px;
+  }
+
+  .card{
+    padding:24px;
+  }
+}
+</style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="bureau-logo">
+  <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bureau Logo">
+    <defs>
+      <linearGradient id="bureauGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff2d2d" />
+        <stop offset="100%" stop-color="#5a0000" />
+      </linearGradient>
+    </defs>
+
+    <rect x="12" y="12" width="196" height="196" rx="42" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+
+    <path d="M78 48H124C159 48 178 64 178 94C178 116 165 129 143 134C169 138 186 154 186 181C186 214 163 230 121 230H78V48ZM114 122C134 122 145 114 145 98C145 82 134 74 114 74H103V122H114ZM119 204C142 204 154 194 154 176C154 157 141 148 117 148H103V204H119Z" transform="scale(.72) translate(28 6)" fill="url(#bureauGradient)"/>
+  </svg>
+</div>
+        <h1>Bureau</h1>
+      </div>
+
+      <div class="nav-links">
+        <a href="#premise">Premise</a>
+        <a href="#problem">Problem</a>
+        <a href="#view">View</a>
+        <a href="#services">Services</a>
+        <a href="#flow">Flow</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#tools">Tools</a>
+        <a href="#identity">Identity</a>
+        <button class="toggle" onclick="toggleTheme()">Toggle Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero fade">
+    <div class="bureau-logo">
+  <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bureau Logo">
+    <defs>
+      <linearGradient id="bureauGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff2d2d" />
+        <stop offset="100%" stop-color="#5a0000" />
+      </linearGradient>
+    </defs>
+
+    <rect x="12" y="12" width="196" height="196" rx="42" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+
+    <path d="M78 48H124C159 48 178 64 178 94C178 116 165 129 143 134C169 138 186 154 186 181C186 214 163 230 121 230H78V48ZM114 122C134 122 145 114 145 98C145 82 134 74 114 74H103V122H114ZM119 204C142 204 154 194 154 176C154 157 141 148 117 148H103V204H119Z" transform="scale(.72) translate(28 6)" fill="url(#bureauGradient)"/>
+  </svg>
+</div>
+
+    <div class="eyebrow">Bureau — The Doctrine</div>
+
+    <h2>
+      Quiet systems for a well-run life and business.
+    </h2>
+
+    <p>
+      Bureau provides bespoke systems, operational clarity, digital environments, and intelligent infrastructure for people and organizations that want their world to run with more order, ease, and precision.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href="#services">Explore Structure</a>
+      <a class="btn" href="#pricing">Pricing Architecture</a>
+    </div>
+  </section>
+
+  <section id="premise" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">01 — Foundation</div>
+      <h3>Core Premise</h3>
+      <p class="lead">
+        Bureau is built on a simple belief: the mind is for thought, not for carrying the weight of scattered information, broken workflows, and preventable noise.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>The Mission</h4>
+        <p>
+          Bureau brings structure to complexity through systems that reduce friction, improve visibility, and preserve momentum.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>The Outcome</h4>
+        <p>
+          Clearer operations. Calmer execution. Better decision-making. Infrastructure that feels invisible once it begins working properly.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>The Philosophy</h4>
+        <p>
+          Structure creates calm. Calm creates better decisions. Good infrastructure should disappear into the background.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="problem" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">02 — Problem Space</div>
+      <h3>The Problem</h3>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>What Bureau Solves</h4>
+        <ul>
+          <li>Scattered apps and fragmented workflows</li>
+          <li>Poor documentation and weak handovers</li>
+          <li>No operational visibility</li>
+          <li>Disconnected digital systems</li>
+          <li>Mental clutter and operational noise</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Who It Serves</h4>
+        <ul>
+          <li>Founders and operators</li>
+          <li>Small and mid-sized businesses</li>
+          <li>Students and creators</li>
+          <li>Freelancers and consultants</li>
+          <li>Teams seeking operational clarity</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>The Bureau Experience</h4>
+        <ul>
+          <li>Calm communication</li>
+          <li>Structured delivery</li>
+          <li>Long-term maintainability</li>
+          <li>Minimal unnecessary meetings</li>
+          <li>Precision over noise</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="view" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">03 — Perspective</div>
+      <h3>The Bureau View</h3>
+    </div>
+
+    <div class="manifesto">
+      <div>No subscription without a job to do.</div>
+      <div>Complexity must justify itself.</div>
+      <div>Good systems reduce cognitive load.</div>
+      <div>Visibility creates operational calm.</div>
+      <div>Quiet power is more durable than loud ambition.</div>
+      <div>Infrastructure should feel inevitable.</div>
+      <div>Clarity compounds.</div>
+    </div>
+  </section>
+
+  <section id="services" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">04 — Service Architecture</div>
+      <h3>The Ecosystem</h3>
+      <p class="lead">
+        Bureau operates as a modular systems house rather than a conventional agency.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Bureau Systems</h4>
+        <p>The Machine.</p>
+        <ul>
+          <li>CRM environments</li>
+          <li>Second-brain systems</li>
+          <li>Operational dashboards</li>
+          <li>SOP architecture</li>
+          <li>Client onboarding systems</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Bureau Signal</h4>
+        <p>The Voice.</p>
+        <ul>
+          <li>Strategy and positioning</li>
+          <li>SEO infrastructure</li>
+          <li>Campaign systems</li>
+          <li>Content planning</li>
+          <li>Competitive analysis</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Bureau Front</h4>
+        <p>The Face.</p>
+        <ul>
+          <li>Premium websites</li>
+          <li>PWA builds</li>
+          <li>AI integrations</li>
+          <li>Hosting infrastructure</li>
+          <li>Performance optimization</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">05 — Engagement Structure</div>
+      <h3>Delivery Flow</h3>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>01 — Discovery</h4>
+        <p>Understanding workflows, bottlenecks, operational goals, and decision-making structures.</p>
+      </div>
+
+      <div class="card">
+        <h4>02 — Architecture</h4>
+        <p>Designing the structure, hierarchy, logic, and information environment.</p>
+      </div>
+
+      <div class="card">
+        <h4>03 — Build</h4>
+        <p>System implementation, integrations, automations, and interface creation.</p>
+      </div>
+
+      <div class="card">
+        <h4>04 — Refinement</h4>
+        <p>Improving usability, reducing friction, and optimizing execution flow.</p>
+      </div>
+
+      <div class="card">
+        <h4>05 — Handover</h4>
+        <p>Documentation, onboarding, walkthroughs, and operational continuity.</p>
+      </div>
+
+      <div class="card">
+        <h4>06 — Support</h4>
+        <p>Long-term refinement, system evolution, and retained infrastructure support.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">06 — Commercial Structure</div>
+      <h3>Pricing Architecture</h3>
+      <p class="lead">
+        Bureau prices by fit, scope, outcome, and continuity burden rather than casual hourly logic.
+      </p>
+    </div>
+
+    <div class="pricing-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Offer</th>
+            <th>Range</th>
+            <th>Use Case</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Ready-made Systems</td>
+            <td>₹1,500–7,500</td>
+            <td>Templates & systems</td>
+            <td>Quick entry offer</td>
+          </tr>
+
+          <tr>
+            <td>One-Shot Build</td>
+            <td>₹10,000–25,000</td>
+            <td>Focused operational build</td>
+            <td>Best lower-friction entry</td>
+          </tr>
+
+          <tr>
+            <td>Structured Build</td>
+            <td>₹25,000–40,000</td>
+            <td>Expanded architecture</td>
+            <td>Richer environments</td>
+          </tr>
+
+          <tr>
+            <td>Custom Bureau System</td>
+            <td>₹25,000–60,000</td>
+            <td>Premium discovery-led infrastructure</td>
+            <td>Main flagship offer</td>
+          </tr>
+
+          <tr>
+            <td>Retainer</td>
+            <td>₹10,000–35,000 / month</td>
+            <td>Support & refinement</td>
+            <td>Long-term continuity</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tools" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">07 — Infrastructure</div>
+      <h3>Tool Philosophy</h3>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Lean Core</h4>
+        <ul>
+          <li>Claude Pro</li>
+          <li>Perplexity</li>
+          <li>Notion</li>
+          <li>Lightweight hosting</li>
+          <li>Minimal recurring burn</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Use Carefully</h4>
+        <ul>
+          <li>Automation layers</li>
+          <li>Paid hosting tiers</li>
+          <li>Creative generation tools</li>
+          <li>Advanced workflow infrastructure</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Budget Discipline</h4>
+        <ul>
+          <li>No subscription without a purpose</li>
+          <li>Tool spend should follow revenue</li>
+          <li>Complexity should create leverage</li>
+          <li>Infrastructure must remain sustainable</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="identity" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">08 — Identity</div>
+      <h3>Visual Language</h3>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Palette</h4>
+        <ul>
+          <li>Obsidian — #050505</li>
+          <li>Charcoal — #1A1A1A</li>
+          <li>Crimson — #FF2D2D</li>
+          <li>Bone — #F5F5F0</li>
+          <li>Silver — #444444</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Typography</h4>
+        <ul>
+          <li>Fondamento for hierarchy</li>
+          <li>Inter for interface and body</li>
+          <li>Editorial authority</li>
+          <li>Modern precision</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Atmosphere</h4>
+        <ul>
+          <li>Dark-first environment</li>
+          <li>Architectural spacing</li>
+          <li>Subtle crimson restraint</li>
+          <li>Luxury through precision</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="blueprint" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">09 — Strategic Blueprint</div>
+      <h3>The Bureau Operating Doctrine</h3>
+      <p class="lead">
+        Bureau is not merely a business. It is a structured operating philosophy designed to reduce chaos, preserve clarity, and create systems that compound over time.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Core Strategic Identity</h4>
+        <ul>
+          <li>Systems House</li>
+          <li>Operational Architecture Studio</li>
+          <li>Quiet Luxury Infrastructure Brand</li>
+          <li>AI-Augmented Systems Consultancy</li>
+          <li>Premium Internal Operating Environment Builder</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Primary Commercial Levers</h4>
+        <ul>
+          <li>High-trust bespoke systems</li>
+          <li>Long-term retainers</li>
+          <li>Premium consulting</li>
+          <li>Digital products and templates</li>
+          <li>Operational transformation engagements</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Long-Term Evolution</h4>
+        <ul>
+          <li>Bureau OS</li>
+          <li>AI operational agents</li>
+          <li>Private founder systems</li>
+          <li>Premium workflow ecosystems</li>
+          <li>Institutional-grade infrastructure</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">10 — Growth Structure</div>
+      <h3>Execution Roadmap</h3>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Phase 01 — Foundation</h4>
+        <ul>
+          <li>Build portfolio-grade systems</li>
+          <li>Create doctrine and identity</li>
+          <li>Develop premium website</li>
+          <li>Launch lightweight service structure</li>
+          <li>Acquire first retained clients</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Phase 02 — Authority</h4>
+        <ul>
+          <li>Publish systems content</li>
+          <li>Create Bureau templates</li>
+          <li>Build operational case studies</li>
+          <li>Increase pricing confidence</li>
+          <li>Refine onboarding systems</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Phase 03 — Infrastructure</h4>
+        <ul>
+          <li>AI-assisted client systems</li>
+          <li>Internal knowledge environments</li>
+          <li>Automation architecture</li>
+          <li>Premium retained ecosystem</li>
+          <li>Operational scale without noise</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="standards" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">11 — Internal Standards</div>
+      <h3>Non-Negotiables</h3>
+    </div>
+
+    <div class="manifesto">
+      <div>Every system must reduce friction, not create more of it.</div>
+      <div>Every interface must feel inevitable and intuitive.</div>
+      <div>Every workflow should preserve cognitive energy.</div>
+      <div>No aesthetic decision should compromise usability.</div>
+      <div>Complexity belongs beneath the surface, never above it.</div>
+      <div>The user experience should feel calm, precise, and structured.</div>
+      <div>Documentation is infrastructure, not an afterthought.</div>
+      <div>Good operations should feel invisible once stabilized.</div>
+    </div>
+  </section>
+
+  <section id="aesthetic" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">12 — Aesthetic Framework</div>
+      <h3>Design Psychology</h3>
+      <p class="lead">
+        Bureau should feel like stepping into a private executive office designed by architects rather than marketers.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Visual Influence</h4>
+        <ul>
+          <li>Luxury editorial design</li>
+          <li>Architectural minimalism</li>
+          <li>High-fashion restraint</li>
+          <li>Private members' club energy</li>
+          <li>Institutional calm</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Emotional Outcome</h4>
+        <ul>
+          <li>Control</li>
+          <li>Precision</li>
+          <li>Clarity</li>
+          <li>Trust</li>
+          <li>Silent confidence</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>What Bureau Is Not</h4>
+        <ul>
+          <li>No startup noise</li>
+          <li>No cyberpunk aesthetics</li>
+          <li>No loud gradients</li>
+          <li>No trend-chasing</li>
+          <li>No visual clutter</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="systems" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">13 — Systems Intelligence</div>
+      <h3>The Bureau Method</h3>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Observe</h4>
+        <p>
+          Study operational behavior, friction patterns, communication gaps, and information flow.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>Structure</h4>
+        <p>
+          Design architecture that simplifies execution while preserving flexibility and scale.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>Refine</h4>
+        <p>
+          Remove unnecessary layers, reduce noise, and improve usability through iteration.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>Automate</h4>
+        <p>
+          Introduce intelligent workflows and AI support only where leverage is meaningful.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>Stabilize</h4>
+        <p>
+          Ensure systems remain sustainable, maintainable, and operationally calm over time.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>Compound</h4>
+        <p>
+          Build environments that become more valuable as they accumulate knowledge and usage.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="closing" class="fade">
+    <div class="section-head">
+      <div class="section-kicker">14 — Final Principle</div>
+      <h3>Why Bureau Exists</h3>
+    </div>
+
+    <div class="card">
+      <p style="font-size:1.05rem; line-height:2; color:var(--text);">
+        Bureau exists for people who are tired of fragmentation, noise, unnecessary complexity, and operational disorder.
+        <br><br>
+        It is a systems brand built around the belief that clarity is leverage, structure preserves momentum, and calm environments create better work.
+        <br><br>
+        Every interface, workflow, document, automation, and operational layer should reduce resistance rather than increase it.
+        <br><br>
+        Bureau is not designed to feel loud.
+        It is designed to feel inevitable.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <h4>Bureau</h4>
+    <p>
+      Silent power is the most articulate.
+    </p>
+    <p style="margin-top:20px;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;opacity:.5;">
+      Bureau Doctrine — Private Blueprint Edition
+    </p>
+  </footer>
+
+  <script>
+    const fades = document.querySelectorAll('.fade');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    fades.forEach(fade => observer.observe(fade));
+
+    function toggleTheme() {
+      document.body.classList.toggle('light');
+    }
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (scrollTop / scrollHeight) * 100;
+      document.getElementById('progress').style.width = progress + '%';
+    });
+  </script>
+
+</body>
+</html>

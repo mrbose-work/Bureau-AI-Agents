@@ -1,0 +1,42 @@
+{
+  "ai": {
+    "primary": {
+      "provider": "nvidia",
+      "model": "meta/llama-4-maverick-17b-128e-instruct",
+      "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "maxTokens": 1024
+    },
+    "fallback": {
+      "provider": "ollama",
+      "model": "llama3",
+      "endpoint": "http://localhost:11434/api/chat"
+    }
+  },
+  "notion": {
+    "businessPageId": "2fb741d0-2ba7-805b-a298-f3a961a2bf3b",
+    "pages": {
+      "bureauOS": "249741d0-2ba7-8008-a4ae-c318b1ed025e",
+      "clientWorkstation": "24b741d0-2ba7-80c0-bbeb-ffb8022019ba",
+      "bureauMeetings": "302741d0-2ba7-8022-a005-dddf1ca46a2a",
+      "businessFinance": "303741d0-2ba7-80ce-95b1-ef4c935aef0c"
+    },
+    "databases": {
+      "businessDashboard": "3a78cb19-cd2f-4343-8a50-facd6e7f54d1",
+      "cwTasks": "3c745fc4-5a73-4d3a-996b-b1def44d115f",
+      "bureauInbox": "9284acc3-17cd-4ccf-b74b-56c0811cf7f8",
+      "bureauClients": "38eabfbf-07ce-47be-9d29-ae34a9049ad7",
+      "bureauProjects": "df427d9e-7ed6-4962-a2ad-18c95f33eb1b",
+      "bureauTasks": "0d045c21-ad76-4401-be88-d4b71ae651ce",
+      "bureauInvoices": "32c1f948-480d-4739-ac80-fd556c27daeb",
+      "bureauFinance": "0f15e774-dd21-421c-b196-6aa919b4c367",
+      "bureauGrowth": "dd994503-14e0-4444-9e5d-60870b8a75b8"
+    }
+  },
+  "agent": {
+    "name": "Benjamin",
+    "version": "1.0",
+    "personality": "butler",
+    "tools": ["file_manager", "terminal", "notion_client", "app_launcher", "memory_store"],
+    "memoryDbPath": "./benjamin-memory.db"
+  }
+}

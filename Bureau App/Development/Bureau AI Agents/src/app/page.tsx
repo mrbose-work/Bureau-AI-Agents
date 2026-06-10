@@ -20,9 +20,15 @@ export default function Home() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const handleSend = useCallback(async (text: string = input) => {
     if (!text.trim()) return;
+
+    // Immediately stop any currently playing voice
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
 
     setMessages(prev => [...prev, { role: 'user', content: text }]);
     setInput('');
@@ -61,6 +67,9 @@ export default function Home() {
   const speakResponse = useCallback((text: string, agent: string) => {
     if (!('speechSynthesis' in window)) return;
 
+    // Stop previous speaking
+    window.speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance(text);
     
     let voice;
@@ -85,13 +94,14 @@ export default function Home() {
     window.speechSynthesis.speak(utterance);
   }, [voices]);
 
-  // Hook to speak when messages change
+  // Hook to speak when messages change (only if voice is enabled)
   useEffect(() => {
+    if (!voiceEnabled) return;
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.role === 'assistant' && lastMessage.agent) {
       speakResponse(lastMessage.content, lastMessage.agent);
     }
-  }, [messages, speakResponse]);
+  }, [messages, speakResponse, voiceEnabled]);
 
   useEffect(() => {
     // Initialize speech recognition
@@ -155,15 +165,21 @@ export default function Home() {
     <main style={{ 
       display: 'flex', 
       flexDirection: 'column', 
-      height: '100vh',
-      maxWidth: '800px',
+      height: '100dvh', // iOS dynamic viewport fix
+      maxWidth: '850px',
       margin: '0 auto',
-      padding: '24px'
+      padding: '16px 20px',
+      position: 'relative'
     }}>
       
-      <header style={{ textAlign: 'center', marginBottom: '24px' }}>
+      <header style={{ 
+        textAlign: 'center', 
+        padding: '10px 0 16px 0', 
+        borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+        marginBottom: '16px'
+      }}>
         <h1 style={{ 
-          fontSize: '2.5rem', 
+          fontSize: '2.2rem', 
           fontWeight: 700, 
           letterSpacing: '-1px',
           color: activeAgent === 'System' ? 'var(--text-color)' : `var(--${activeAgent.toLowerCase()}-color)`,
@@ -171,100 +187,164 @@ export default function Home() {
         }}>
           Bureau OS
         </h1>
-        <p style={{ opacity: 0.6, fontSize: '0.9rem' }}>
+        <p style={{ opacity: 0.6, fontSize: '0.85rem', marginTop: '4px' }}>
           {activeAgent === 'System' ? 'Awaiting Input...' : `Currently Active: ${activeAgent}`}
         </p>
       </header>
 
+      {/* Chat Messages Panel */}
       <div className="glass-panel" style={{ 
         flex: 1, 
         overflowY: 'auto', 
-        padding: '24px',
+        padding: '20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '16px',
-        marginBottom: '24px'
+        marginBottom: '16px',
+        borderRadius: '16px'
       }}>
         {messages.length === 0 ? (
-          <div style={{ margin: 'auto', textAlign: 'center', opacity: 0.5 }}>
-            <p>Welcome to the Bureau.</p>
-            <p style={{ fontSize: '0.8rem', marginTop: '8px' }}>Speak or type to begin.</p>
+          <div style={{ margin: 'auto', textAlign: 'center', opacity: 0.6, padding: '20px' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>💼</div>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '8px' }}>Welcome to Bureau OS</h3>
+            <p style={{ fontSize: '0.85rem', lineHeight: '1.5', maxWidth: '320px', margin: '0 auto' }}>
+              I am your business partner. Type or use voice controls below to manage tasks, schedule meetings, or query Notion.
+            </p>
           </div>
         ) : (
           messages.map((msg, idx) => (
-            <div key={idx} style={{
-              alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-              maxWidth: '80%',
-              padding: '12px 16px',
-              borderRadius: '12px',
-              backgroundColor: msg.role === 'user' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.4)',
-              borderLeft: msg.role === 'assistant' ? `4px solid var(--${msg.agent?.toLowerCase()}-color)` : 'none',
-              borderRight: msg.role === 'user' ? `4px solid rgba(255,255,255,0.3)` : 'none',
-            }}>
+            <div 
+              key={idx} 
+              className="message-bubble"
+              style={{
+                alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                backgroundColor: msg.role === 'user' ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.45)',
+                borderLeft: msg.role === 'assistant' ? `4px solid var(--${msg.agent?.toLowerCase()}-color)` : 'none',
+                borderRight: msg.role === 'user' ? `4px solid rgba(255, 255, 255, 0.2)` : 'none',
+              }}
+            >
               {msg.role === 'assistant' && (
                 <div style={{ 
                   fontSize: '0.75rem', 
-                  opacity: 0.6, 
-                  marginBottom: '4px',
+                  opacity: 0.8, 
+                  marginBottom: '6px',
                   color: `var(--${msg.agent?.toLowerCase()}-color)`,
-                  fontWeight: 600
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
                   {msg.agent}
                 </div>
               )}
-              <div style={{ lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+              <div style={{ whiteSpace: 'pre-wrap' }}>
                 {msg.content}
               </div>
             </div>
           ))
         )}
         {isLoading && (
-          <div style={{ alignSelf: 'flex-start', opacity: 0.5 }}>
+          <div style={{ 
+            alignSelf: 'flex-start', 
+            opacity: 0.5, 
+            padding: '12px 16px',
+            fontSize: '0.9rem',
+            fontStyle: 'italic'
+          }}>
             Thinking...
           </div>
         )}
         <div ref={chatEndRef} />
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <button 
-          onClick={toggleListening}
-          className="btn"
-          style={{ 
-            padding: '12px', 
-            borderRadius: '50%', 
-            width: '48px', 
-            height: '48px',
-            borderColor: isListening ? '#ff3366' : ''
-          }}
-          title="Voice Input"
+      {/* Input controls container */}
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '10px', 
+        paddingBottom: '10px'
+      }}>
+        {/* Main Text Input Field */}
+        <form 
+          onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+          style={{ display: 'flex', gap: '10px', width: '100%', alignItems: 'center' }}
         >
-          {isListening ? (
-            <div className="listening-indicator" />
-          ) : (
-            <span style={{ fontSize: '1.2rem' }}>🎤</span>
-          )}
-        </button>
+          <input 
+            type="text"
+            className="glass-input"
+            style={{ flex: 1 }}
+            placeholder={isListening ? "Listening to voice input..." : "Type your request here..."}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            autoComplete="off"
+            disabled={isLoading}
+          />
+          
+          <button 
+            type="submit"
+            className="btn btn-primary"
+            disabled={!input.trim() || isLoading}
+            style={{ 
+              height: '48px', 
+              padding: '0 24px', 
+              fontSize: '0.95rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Send ↗
+          </button>
+        </form>
         
-        <input 
-          type="text"
-          className="glass-input"
-          style={{ flex: 1 }}
-          placeholder="Type your request here..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleSend();
-          }}
-        />
-        
-        <button 
-          className="btn btn-primary"
-          onClick={() => handleSend()}
-          disabled={!input.trim() || isLoading}
-        >
-          Send ↗
-        </button>
+        {/* Secondary Voice Controls */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '10px', 
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <button 
+            type="button"
+            onClick={() => {
+              setVoiceEnabled(v => !v);
+              if (voiceEnabled) window.speechSynthesis.cancel();
+            }}
+            className="btn"
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '20px',
+              fontSize: '0.8rem',
+              borderColor: voiceEnabled ? 'var(--agent-color-current)' : 'rgba(255,255,255,0.06)',
+              backgroundColor: voiceEnabled ? 'rgba(255,255,255,0.03)' : 'transparent',
+              opacity: voiceEnabled ? 1 : 0.6
+            }}
+            title={voiceEnabled ? 'Mute AI Voice' : 'Enable AI Voice'}
+          >
+            <span style={{ fontSize: '1rem' }}>{voiceEnabled ? '🔊 Voice Response On' : '🔇 Voice Response Off'}</span>
+          </button>
+
+          <button 
+            type="button"
+            onClick={toggleListening}
+            className="btn"
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '20px',
+              fontSize: '0.8rem',
+              borderColor: isListening ? '#ff3366' : 'rgba(255,255,255,0.06)',
+              backgroundColor: isListening ? 'rgba(255, 51, 102, 0.08)' : 'transparent'
+            }}
+            title="Toggle Voice Input"
+          >
+            {isListening ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div className="listening-indicator" />
+                <span>Listening... Click to Stop</span>
+              </div>
+            ) : (
+              <span>🎤 Press to Speak</span>
+            )}
+          </button>
+        </div>
       </div>
 
     </main>

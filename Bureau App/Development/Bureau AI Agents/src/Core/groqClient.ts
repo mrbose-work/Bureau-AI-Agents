@@ -1,24 +1,24 @@
 import OpenAI from 'openai';
 
 // Lazy initialization to prevent build-time crashes if API key is missing
-let groqInstance: OpenAI | null = null;
+let nvidiaInstance: OpenAI | null = null;
 
-export function getGroqClient() {
-  if (!groqInstance) {
-    const apiKey = process.env.GROQ_API_KEY;
+export function getLLMClient() {
+  if (!nvidiaInstance) {
+    const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey && typeof window === 'undefined') {
-      console.warn("GROQ_API_KEY is missing. Groq features will be disabled.");
+      console.warn("NVIDIA_API_KEY is missing. AI features will be disabled.");
     }
     
-    groqInstance = new OpenAI({
+    nvidiaInstance = new OpenAI({
       apiKey: apiKey || 'missing_key',
-      baseURL: "https://api.groq.com/openai/v1",
+      baseURL: "https://integrate.api.nvidia.com/v1",
     });
   }
-  return groqInstance;
+  return nvidiaInstance;
 }
 
-export const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+export const DEFAULT_MODEL = "meta/llama-3.1-8b-instruct";
 
 export async function generateAgentResponse(
   messages: OpenAI.Chat.ChatCompletionMessageParam[], 
@@ -26,7 +26,7 @@ export async function generateAgentResponse(
   tools?: OpenAI.Chat.ChatCompletionTool[]
 ) {
   try {
-    const client = getGroqClient();
+    const client = getLLMClient();
     const completion = await client.chat.completions.create({
       messages,
       model,
@@ -38,7 +38,7 @@ export async function generateAgentResponse(
     
     return completion.choices[0]?.message;
   } catch (error) {
-    console.error("Groq API Error:", error);
-    throw new Error("Failed to generate response from Groq. Please ensure GROQ_API_KEY is set in Vercel.");
+    console.error("Nvidia API Error:", error);
+    throw new Error("Failed to generate AI response. Please check NVIDIA_API_KEY.");
   }
 }
