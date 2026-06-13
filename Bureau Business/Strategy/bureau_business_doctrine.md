@@ -116,15 +116,26 @@ To build a sustainable foundation, Bureau manages its internal operations with s
 
 ---
 
-## Appendix: Future Market Strategy
+## Appendix: Future Market Strategy & Launch Blueprint
 
-*Note: Marketing, content generation, and social media outreach strategy will be activated in Phase 2 of the business roadmap. The focus remains on establishing Admin, Finance, and Ops controls first.*
+*Note: The focus remains on establishing Admin, Finance, and Ops controls first. Initial lead generation relies on capability proof.*
 
-### A.1 Go-to-Market Phases
-*   **Launch Phase 1 (Months 1–2)**: Build internally. Complete the showcase Notion workspace, design the single-page website, and construct the standard operational templates.
-*   **Pilot Phase 2 (Months 2–4)**: Secure 3 local pilot clients in Kolkata through warm connections. Execute with obsessive quality to generate highly detailed before/after case studies.
-*   **Compounding Phase 3 (Months 4–6)**: Publish case studies on LinkedIn, list templates for passive traffic, and introduce monthly retainers.
+### A.1 Go-to-Market Phases & The Speculative Proof Strategy
+Because Bureau is a new practice, clients require proof of capability before committing to a bespoke project. We will generate this proof through **Speculative Builds**:
+1.  **Launch Phase 1 (Months 1–2) — Internal Builds & Speculative Proof**:
+    *   Build two flagship, high-fidelity demo systems in Notion: a **Personal OS / Creator OS** and an **SME Operational Hub**.
+    *   Record detailed, 5-minute video walkthroughs (using Loom) highlighting how these systems save time, reduce mental clutter, and organize databases.
+    *   Design a simple web presence showcasing these demo systems.
+2.  **Pilot Phase 2 (Months 2–4) — Hand-Selected Premium Clients**:
+    *   Use the speculative video walkthroughs to secure 3 pilot clients through warm networks.
+    *   Execute these initial projects at premium rates (₹25,000+), focusing on obsessive delivery quality to generate our first real before/after case studies.
+3.  **Compounding Phase 3 (Months 4–6) — Template Productization & Volume**:
+    *   Publish case studies from Phase 2 on professional channels (LinkedIn/X).
+    *   **Transition to Volume**: Package the successful bespoke structures into standardized, download-ready Notion templates (Blueprints) priced between ₹1,500 and ₹7,500 for high-volume, passive sales.
 
-### A.2 Brand Channels
-*   **Instagram**: Visual showcase of database layouts, clean systems carousels, and reels demonstrating before/after operational transformations.
+### A.2 Lean Administrative Principle
+- Maintain an absolute zero-overhead budget for operational software subscriptions (e.g. avoiding paid automation or scheduling tiers) until live client engagements are active and highlight clear administrative bottlenecks.
+
+### A.3 Brand Channels
 *   **LinkedIn**: Long-form strategic content targeting founders, unpacking the metrics of operational calm and digital workspace design.
+*   **X (Twitter)**: Sharing quick database tips, layout logic, and automated workflows.
