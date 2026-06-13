@@ -2744,6 +2744,58 @@
     }
     #brand .insight-block p strong { color: var(--gold); }
 
+    /* Inline editable inputs for tool costs and expenses */
+    .tool-cost-input, .expense-number-input {
+      width: 75px;
+      text-align: right;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed var(--muted);
+      color: var(--accent);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+      padding: 2px 4px;
+      transition: border-bottom-color 0.2s ease, color 0.2s ease;
+    }
+    .tool-cost-input:focus, .expense-number-input:focus {
+      border-bottom: 1px solid var(--accent);
+      color: var(--text);
+    }
+    /* Hide input number arrows for clean look */
+    .tool-cost-input::-webkit-outer-spin-button,
+    .tool-cost-input::-webkit-inner-spin-button,
+    .expense-number-input::-webkit-outer-spin-button,
+    .expense-number-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .tool-cost-input[type=number], .expense-number-input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
+    .expense-number-input {
+      font-size: 0.9rem;
+      width: 85px;
+    }
+
+    /* Visual Tier Cards styling */
+    .calc-radio-card.tier-card {
+      position: relative;
+      border-color: var(--line);
+      padding: 18px;
+    }
+    .calc-radio-card.tier-card:hover {
+      border-color: var(--muted);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    .calc-radio-card.tier-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 15px rgba(255, 45, 45, 0.15);
+    }
+
   </style>
 </head>
 <body>
@@ -4103,32 +4155,48 @@
                   </div>
                 </div>
 
-                <div class="calc-group" id="systemsTiersBox">
-                  <label>Systems Scope Level</label>
-                  <select class="search-input" id="systemsTierSelect" style="padding-left:16px;" onchange="calculatePrice()">
-                    <option value="blueprint">Blueprints (Ready-made Templates) — ₹4,500</option>
-                    <option value="oneshot">One-Shot Build (Single Database utility) — ₹18,000</option>
-                    <option value="structured">Structured Build (Small Team OS, 3 Databases) — ₹32,000</option>
-                    <option value="custom" selected>Custom System (Flagship Enterprise Hub) — ₹48,000</option>
-                  </select>
-                </div>
+                <div class="calc-group" id="offerTiersBox">
+                  <label id="tierSelectLabel">Select Offer Tier</label>
+                  <div id="tierCardsGrid" class="calc-options-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                    <!-- Populated dynamically by JS -->
+                  </div>
 
-                <div class="calc-group" id="frontTiersBox" style="display:none;">
-                  <label>Front Scope Level</label>
-                  <select class="search-input" id="frontTierSelect" style="padding-left:16px;" onchange="calculatePrice()">
-                    <option value="basic">Standard Web Landing Page (Framer/Wix) — ₹15,000</option>
-                    <option value="unified" selected>Unified Web Presence (Multi-page Web Build) — ₹30,000</option>
-                    <option value="custom_html">Custom Developer-Grade Static HTML/CSS/JS — ₹45,000</option>
-                  </select>
-                </div>
+                  <div id="tierScopeDetails" style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                      <div>
+                        <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #00e676; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                          <svg style="width:14px;height:14px;color:#00e676;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          Scope Inclusions
+                        </div>
+                        <ul id="tierInclusionsList" style="font-size: 0.8rem; color: var(--muted); padding-left: 16px; margin: 0; line-height: 1.5;">
+                        </ul>
+                      </div>
+                      <div>
+                        <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                          <svg style="width:14px;height:14px;color:var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                          Core Exclusions
+                        </div>
+                        <ul id="tierExclusionsList" style="font-size: 0.8rem; color: var(--muted); padding-left: 16px; margin: 0; line-height: 1.5;">
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
 
-                <div class="calc-group" id="signalTiersBox" style="display:none;">
-                  <label>Signal Scope Level</label>
-                  <select class="search-input" id="signalTierSelect" style="padding-left:16px;" onchange="calculatePrice()">
-                    <option value="strategy">Signal Direction (Strategy Retainer / mo) — ₹12,000</option>
-                    <option value="command" selected>Signal Command (Strategy &amp; Execution Retainer / mo) — ₹30,000</option>
-                    <option value="blueprint_content">Custom Content Architecture (One-off Blueprint) — ₹18,000</option>
-                  </select>
+                  <div id="priceCalibrationBox" style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                      <label style="margin-bottom: 0; font-weight:600; color:var(--text); text-transform:none; letter-spacing:normal;">Calibrate Quote Price</label>
+                      <div style="display: flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 700; font-size: 1.1rem;">
+                        <span>₹</span>
+                        <input type="number" id="customQuoteInput" style="width: 100px; text-align: right; background: transparent; border: none; border-bottom: 1px dashed var(--muted); color: var(--accent); font-family: inherit; font-size: 1.1rem; font-weight: 700; outline: none; padding: 2px;" oninput="updatePriceFromInput(this.value)">
+                      </div>
+                    </div>
+                    <input type="range" id="customQuoteSlider" style="width: 100%; accent-color: var(--accent);" oninput="updatePriceFromSlider(this.value)">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 8px;">
+                      <span id="label_cal_min">Min: ₹0</span>
+                      <span id="label_cal_range" style="font-style: italic;">Recommended Range: ₹0 – ₹0</span>
+                      <span id="label_cal_max">Max: ₹0</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="calc-group">
@@ -4276,6 +4344,7 @@
                     <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px;" onclick="applyPreset('bootstrap')">Bootstrap Minimal (₹2,000)</button>
                     <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px;" onclick="applyPreset('powerhouse')">Powerhouse Max (₹32,000+)</button>
                     <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px; border-color:var(--accent); color:var(--accent);" onclick="applyPreset('none')">Deselect All</button>
+                    <button class="utility-btn" style="padding: 6px 12px; font-size:0.8rem; border-radius:8px; border-color:#ffb74d; color:#ffb74d;" onclick="resetToolsToDefaults()">Reset to Defaults</button>
                   </div>
                 </div>
 
@@ -4331,38 +4400,50 @@
 
                   <!-- Interactive Expenses Sliders Breakdown -->
                   <div class="calc-group" style="margin-bottom:15px; background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); padding: 18px; border-radius: 16px;">
-                    <label style="color:var(--text); font-weight:600; margin-bottom:12px; display:block; border:none; padding:0; text-transform:none; letter-spacing:normal;">Operational Expenses Breakdown</label>
+                    <label style="color:var(--text); font-weight:600; margin-bottom:16px; display:block; border:none; padding:0; text-transform:none; letter-spacing:normal;">Operational Expenses Breakdown</label>
                     
-                    <div style="margin-bottom: 12px;">
-                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
-                        <span>Rent &amp; Workspace</span>
-                        <span id="label_exp_rent" style="color:var(--accent); font-weight:600;">₹5,000</span>
+                    <div style="margin-bottom: 16px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:6px;">
+                        <span style="color:var(--muted);">Rent &amp; Workspace</span>
+                        <div style="display:flex; align-items:center; gap:2px; color:var(--accent); font-weight:600;">
+                          <span>₹</span>
+                          <input type="number" id="input_exp_rent" class="expense-number-input" value="5000" min="0" oninput="updateExpenseFromInput('rent', this.value)">
+                        </div>
                       </div>
-                      <input type="range" id="exp_rent" min="0" max="50000" step="1000" value="5000" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                      <input type="range" id="exp_rent" min="0" max="50000" step="1000" value="5000" style="width:100%; accent-color:var(--accent);" oninput="updateExpenseFromSlider('rent', this.value)">
                     </div>
                     
-                    <div style="margin-bottom: 12px;">
-                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
-                        <span>Internet &amp; Utilities</span>
-                        <span id="label_exp_net" style="color:var(--accent); font-weight:600;">₹1,500</span>
+                    <div style="margin-bottom: 16px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:6px;">
+                        <span style="color:var(--muted);">Internet &amp; Utilities</span>
+                        <div style="display:flex; align-items:center; gap:2px; color:var(--accent); font-weight:600;">
+                          <span>₹</span>
+                          <input type="number" id="input_exp_net" class="expense-number-input" value="1500" min="0" oninput="updateExpenseFromInput('net', this.value)">
+                        </div>
                       </div>
-                      <input type="range" id="exp_net" min="500" max="5000" step="100" value="1500" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                      <input type="range" id="exp_net" min="500" max="5000" step="100" value="1500" style="width:100%; accent-color:var(--accent);" oninput="updateExpenseFromSlider('net', this.value)">
                     </div>
 
-                    <div style="margin-bottom: 12px;">
-                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
-                        <span>Taxes &amp; Professional Fees</span>
-                        <span id="label_exp_tax" style="color:var(--accent); font-weight:600;">₹3,500</span>
+                    <div style="margin-bottom: 16px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:6px;">
+                        <span style="color:var(--muted);">Taxes &amp; Professional Fees</span>
+                        <div style="display:flex; align-items:center; gap:2px; color:var(--accent); font-weight:600;">
+                          <span>₹</span>
+                          <input type="number" id="input_exp_tax" class="expense-number-input" value="3500" min="0" oninput="updateExpenseFromInput('tax', this.value)">
+                        </div>
                       </div>
-                      <input type="range" id="exp_tax" min="0" max="20000" step="500" value="3500" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                      <input type="range" id="exp_tax" min="0" max="20000" step="500" value="3500" style="width:100%; accent-color:var(--accent);" oninput="updateExpenseFromSlider('tax', this.value)">
                     </div>
 
-                    <div style="margin-bottom: 12px;">
-                      <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
-                        <span>Marketing &amp; Growth Spend</span>
-                        <span id="label_exp_mkt" style="color:var(--accent); font-weight:600;">₹5,000</span>
+                    <div style="margin-bottom: 16px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:6px;">
+                        <span style="color:var(--muted);">Marketing &amp; Growth Spend</span>
+                        <div style="display:flex; align-items:center; gap:2px; color:var(--accent); font-weight:600;">
+                          <span>₹</span>
+                          <input type="number" id="input_exp_mkt" class="expense-number-input" value="5000" min="0" oninput="updateExpenseFromInput('mkt', this.value)">
+                        </div>
                       </div>
-                      <input type="range" id="exp_mkt" min="0" max="30000" step="1000" value="5000" style="width:100%; accent-color:var(--accent);" oninput="updateOtherExpenses()">
+                      <input type="range" id="exp_mkt" min="0" max="30000" step="1000" value="5000" style="width:100%; accent-color:var(--accent);" oninput="updateExpenseFromSlider('mkt', this.value)">
                     </div>
 
                     <!-- Hidden input to maintain compatibility with calculateProfitability -->
@@ -4424,13 +4505,16 @@
               <div class="calc-controls">
                 <h4>Reserves &amp; Cash Balance</h4>
                 <div class="calc-group" style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--line); padding: 20px; border-radius: 16px;">
-                  <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:10px; font-weight:600;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; margin-bottom:12px; font-weight:600;">
                     <span>Liquid Cash Reserves (INR)</span>
-                    <span id="label_bank_reserve" style="color:#00e676; font-weight:700;">₹50,000</span>
+                    <div style="display:flex; align-items:center; gap:2px; color:#00e676; font-weight:700;">
+                      <span>₹</span>
+                      <input type="number" id="input_bank_reserve" class="expense-number-input" value="50000" min="0" style="color:#00e676; font-weight:700; width:95px;" oninput="updateReservesFromInput(this.value)">
+                    </div>
                   </div>
-                  <input type="range" id="bank_reserve_input" min="0" max="500000" step="5000" value="50000" style="width:100%; accent-color:#00e676;" oninput="calculateRunway()">
+                  <input type="range" id="bank_reserve_input" min="0" max="500000" step="5000" value="50000" style="width:100%; accent-color:#00e676;" oninput="updateReservesFromSlider(this.value)">
                   <p style="font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.4;">
-                    Adjust the slider to simulate your current bank balances / cash reserves.
+                    Adjust the slider or type directly to simulate your current bank balances / cash reserves.
                   </p>
                 </div>
               </div>
@@ -5472,6 +5556,9 @@
       // Load saved SOP checklists
       loadSopsCache();
 
+      // Load cached tools from localStorage
+      loadToolsFromCache();
+
       // Initialize AI Tools & Profitability Estimator
       renderTools();
       updateOtherExpenses();
@@ -5480,6 +5567,9 @@
       updateBrandVoiceTester();
       switchGtmPhase(0);
       loadProofPillarsCache();
+      
+      // Initialize interactive Pricing Scope Architect
+      selectPractice('systems');
     });
 
     // Theme switch toggle
@@ -5579,9 +5669,214 @@
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // INTERACTIVE PRICING & SCOPE CALCULATOR SCRIPTS
+    // INTERACTIVE PRICING & SCOPE CALCULATOR SCRIPTS & SERVICE METADATA
+    const servicesMetadata = {
+      systems: [
+        {
+          id: 'blueprint',
+          name: 'Blueprints',
+          range: '₹1,500 – ₹7,500',
+          minPrice: 1500,
+          maxPrice: 7500,
+          defaultPrice: 4500,
+          timeline: 'Instant Delivery',
+          desc: 'Pre-configured, download-ready Notion workspaces.',
+          inclusions: [
+            'Pre-configured templates ready for immediate duplication',
+            'Built-in layout styling and sample structure guidelines',
+            'Standard instructions documentation sheet'
+          ],
+          exclusions: [
+            'No custom database mapping or configuration changes',
+            'No data migration or onboarding support sessions',
+            'No active API connections or automated integrations'
+          ]
+        },
+        {
+          id: 'oneshot',
+          name: 'One-Shot Build',
+          range: '₹10,000 – ₹25,000',
+          minPrice: 10000,
+          maxPrice: 25000,
+          defaultPrice: 18000,
+          timeline: '1 - 2 Weeks',
+          desc: 'Implementation of 1 or max 2 simple databases.',
+          inclusions: [
+            'Setup of 1-2 core databases (e.g. contact log or task database)',
+            '1-hour discovery session with founder',
+            'Short custom Loom walkthrough tutorial video'
+          ],
+          exclusions: [
+            'Relational database linking across multiple departments',
+            'Automated API connections (Make/Zapier)',
+            'Live team onboarding workshops'
+          ]
+        },
+        {
+          id: 'structured',
+          name: 'Structured Build',
+          range: '₹25,000 – ₹40,000',
+          minPrice: 25000,
+          maxPrice: 40000,
+          defaultPrice: 32000,
+          timeline: '3 - 4 Weeks',
+          desc: 'Setup of up to 3 interrelated databases.',
+          inclusions: [
+            'Setup of up to 3 interrelated databases (e.g. CRM linked to Projects)',
+            'Basic email notifications or Slack triggers configuration',
+            '1-hour live staff training and onboarding session'
+          ],
+          exclusions: [
+            'Bespoke corporate SOP wikis',
+            'Advanced custom APIs or developer-grade integrations',
+            'Dedicated post-support retainers'
+          ]
+        },
+        {
+          id: 'custom',
+          name: 'Custom System',
+          range: '₹25,000 – ₹60,000',
+          minPrice: 25000,
+          maxPrice: 60000,
+          defaultPrice: 48000,
+          timeline: '4 - 6 Weeks',
+          desc: 'Full operational custom Notion audit.',
+          inclusions: [
+            'Full operational audit and database schemas design',
+            'Custom multi-department workspaces setup',
+            'Make/Zapier automated integrations',
+            'Built-in corporate SOP wikis and custom icons',
+            '2 training workshops & 30 days active support'
+          ],
+          exclusions: [
+            'Long-term hosting or API billing expenses',
+            'Third-party software monthly costs (Notion/Make)'
+          ]
+        },
+        {
+          id: 'retainer',
+          name: 'Systems Retainer',
+          range: '₹10,000 – ₹20,000 / mo',
+          minPrice: 10000,
+          maxPrice: 20000,
+          defaultPrice: 15000,
+          timeline: 'Monthly Retainer',
+          desc: 'Dedicated ongoing operations support.',
+          inclusions: [
+            'Continuous database schema monitoring & health checks',
+            'Monthly routine backups & data cleanups',
+            'Minor layout adjustments and workspace optimizations'
+          ],
+          exclusions: [
+            'Rebuilding entire workspaces from scratch',
+            'Writing separate custom code applications'
+          ]
+        }
+      ],
+      front: [
+        {
+          id: 'basic',
+          name: 'Web Build',
+          range: '₹12,000 – ₹40,000',
+          minPrice: 12000,
+          maxPrice: 40000,
+          defaultPrice: 25000,
+          timeline: '2 - 4 Weeks',
+          desc: 'Wireframing, copywriting, responsive web build.',
+          inclusions: [
+            'Custom responsive web build on Wix, Framer, or static HTML',
+            'Custom copy assets and wireframe layouts',
+            'Basic speed optimization and DNS configurations'
+          ],
+          exclusions: [
+            'Monthly hosting subscription or domain purchase billing',
+            'Continuous page design additions or ongoing copy changes'
+          ]
+        },
+        {
+          id: 'retainer',
+          name: 'Host Retainer',
+          range: '₹2,500 – ₹5,000 / mo',
+          minPrice: 2500,
+          maxPrice: 5000,
+          defaultPrice: 3500,
+          timeline: 'Monthly Retainer',
+          desc: 'Server configuration & speed audits.',
+          inclusions: [
+            'Server configurations and routine security checks',
+            'Monthly page speed audits & performance tracking',
+            'Minor text adjustments and copy updates (up to 2 hours/mo)'
+          ],
+          exclusions: [
+            'Redesigning entire site pages or navigation structures',
+            'Writing separate content marketing pages'
+          ]
+        }
+      ],
+      signal: [
+        {
+          id: 'strategy',
+          name: 'Signal Direction',
+          range: '₹10,000 – ₹15,000 / mo',
+          minPrice: 10000,
+          maxPrice: 15000,
+          defaultPrice: 12000,
+          timeline: 'Monthly Retainer',
+          desc: 'Brand positioning & content strategy roadmap.',
+          inclusions: [
+            'Brand positioning roadmap & competitor keyword audit',
+            '3-month strategic content outline plan',
+            'Monthly strategy audit reviews and keyword reports'
+          ],
+          exclusions: [
+            'Social media copywriting execution or graphic design',
+            'Publishing, scheduling, or posting'
+          ]
+        },
+        {
+          id: 'command',
+          name: 'Signal Command',
+          range: '₹25,000 – ₹35,000 / mo',
+          minPrice: 25000,
+          maxPrice: 35000,
+          defaultPrice: 30000,
+          timeline: 'Monthly Retainer',
+          desc: 'Full brand content copy execution.',
+          inclusions: [
+            'Copywriting for 3 social posts per week',
+            '2 SEO-optimized blog articles per month',
+            'Social posting scheduling, publishing, and analytics tracking'
+          ],
+          exclusions: [
+            'Ad campaign budgets and paid sponsorship spend billing',
+            'Advanced video editing or high-end graphics assets creation'
+          ]
+        },
+        {
+          id: 'blueprint_content',
+          name: 'Content Architect',
+          range: '₹15,000 – ₹25,000',
+          minPrice: 15000,
+          maxPrice: 25000,
+          defaultPrice: 18000,
+          timeline: '2 Weeks',
+          desc: 'One-off custom content blueprint roadmap.',
+          inclusions: [
+            'Niche keyword analysis and search intent mapping',
+            'Detailed content structure outlines and scheduling templates',
+            'Competitor brand authority audit review'
+          ],
+          exclusions: [
+            'Writing finalized post drafts or designing creatives',
+            'Active management of corporate social media handles'
+          ]
+        }
+      ]
+    };
+
     let activePractice = 'systems';
-    let calcAddonsTotal = 0;
+    let currentSelectedTier = null;
+    let currentCustomPrice = 0;
 
     function selectPractice(practice) {
       activePractice = practice;
@@ -5597,10 +5892,87 @@
         }
       });
 
-      document.getElementById('systemsTiersBox').style.display = (practice === 'systems') ? 'block' : 'none';
-      document.getElementById('frontTiersBox').style.display = (practice === 'front') ? 'block' : 'none';
-      document.getElementById('signalTiersBox').style.display = (practice === 'signal') ? 'block' : 'none';
+      renderTierCards();
+      
+      // Auto select first tier
+      const defaultTier = servicesMetadata[practice][0];
+      if (defaultTier) {
+        selectTier(defaultTier.id);
+      }
+    }
 
+    function renderTierCards() {
+      const grid = document.getElementById('tierCardsGrid');
+      if (!grid) return;
+      
+      grid.innerHTML = '';
+      
+      const tiers = servicesMetadata[activePractice];
+      tiers.forEach(tier => {
+        const cardHtml = `
+          <div class="calc-radio-card tier-card" data-tier-id="${tier.id}" onclick="selectTier('${tier.id}')">
+            <h5 style="font-size:0.95rem; font-weight:600;">${tier.name}</h5>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent); margin-top: 4px; display: block;">${tier.range}</span>
+            <p style="margin-top: 6px; font-size: 0.75rem; color: var(--muted); line-height: 1.4;">${tier.desc}</p>
+          </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    function selectTier(tierId) {
+      const tiers = servicesMetadata[activePractice];
+      const tier = tiers.find(t => t.id === tierId);
+      if (!tier) return;
+
+      currentSelectedTier = tier;
+      currentCustomPrice = tier.defaultPrice;
+
+      // Toggle visual state in selector cards
+      document.querySelectorAll('#tierCardsGrid .tier-card').forEach(card => {
+        if (card.dataset.tierId === tierId) {
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      });
+
+      // Populate scope inclusions & exclusions
+      const incList = document.getElementById('tierInclusionsList');
+      const excList = document.getElementById('tierExclusionsList');
+      incList.innerHTML = tier.inclusions.map(inc => `<li style="margin-bottom:8px; color:var(--muted)">${inc}</li>`).join('');
+      excList.innerHTML = tier.exclusions.map(exc => `<li style="margin-bottom:8px; color:var(--muted)">${exc}</li>`).join('');
+      document.getElementById('tierScopeDetails').style.display = 'block';
+
+      // Set calibrator limits
+      const slider = document.getElementById('customQuoteSlider');
+      const input = document.getElementById('customQuoteInput');
+
+      slider.min = tier.minPrice;
+      slider.max = tier.maxPrice;
+      slider.value = currentCustomPrice;
+      input.value = currentCustomPrice;
+
+      // Labels
+      document.getElementById('label_cal_min').textContent = 'Min: ₹' + tier.minPrice.toLocaleString('en-IN');
+      document.getElementById('label_cal_max').textContent = 'Max: ₹' + tier.maxPrice.toLocaleString('en-IN');
+      document.getElementById('label_cal_range').textContent = `Recommended Range: ₹${tier.minPrice.toLocaleString('en-IN')} – ₹${tier.maxPrice.toLocaleString('en-IN')}`;
+
+      calculatePrice();
+    }
+
+    function updatePriceFromSlider(val) {
+      currentCustomPrice = parseInt(val) || 0;
+      document.getElementById('customQuoteInput').value = currentCustomPrice;
+      calculatePrice();
+    }
+
+    function updatePriceFromInput(val) {
+      currentCustomPrice = parseInt(val) || 0;
+      const slider = document.getElementById('customQuoteSlider');
+      if (currentSelectedTier) {
+        slider.value = Math.min(currentSelectedTier.maxPrice, Math.max(currentSelectedTier.minPrice, currentCustomPrice));
+      }
       calculatePrice();
     }
 
@@ -5618,60 +5990,11 @@
     }
 
     function calculatePrice() {
-      let basePrice = 0;
-      let desc = '';
-      let timeline = '';
+      if (!currentSelectedTier) return;
       
-      if (activePractice === 'systems') {
-        const tier = document.getElementById('systemsTierSelect').value;
-        if (tier === 'blueprint') {
-          basePrice = 4500;
-          desc = "Blueprints (Pre-configured Notion workspaces and digital strategy documents)";
-          timeline = "Instant Delivery";
-        } else if (tier === 'oneshot') {
-          basePrice = 18000;
-          desc = "One-Shot Build (Single functional database utility in Notion with tutorials)";
-          timeline = "1 - 2 Weeks";
-        } else if (tier === 'structured') {
-          basePrice = 32000;
-          desc = "Structured Build (Integrated multi-database system for small teams)";
-          timeline = "3 - 4 Weeks";
-        } else if (tier === 'custom') {
-          basePrice = 48000;
-          desc = "Custom System (Flagship Enterprise Hub) — ₹48,000";
-          timeline = "4 - 6 Weeks";
-        }
-      } else if (activePractice === 'front') {
-        const tier = document.getElementById('frontTierSelect').value;
-        if (tier === 'basic') {
-          basePrice = 15000;
-          desc = "Standard Web Landing Page (Responsive single-page web build on Wix or Framer)";
-          timeline = "2 Weeks";
-        } else if (tier === 'unified') {
-          basePrice = 30000;
-          desc = "Unified Web Presence (Multi-page website build with custom copywriting and CMS setup)";
-          timeline = "3 - 4 Weeks";
-        } else if (tier === 'custom_html') {
-          basePrice = 45000;
-          desc = "Custom Developer-Grade Static HTML/CSS/JS (High performance, responsive custom code)";
-          timeline = "4 Weeks";
-        }
-      } else if (activePractice === 'signal') {
-        const tier = document.getElementById('signalTierSelect').value;
-        if (tier === 'strategy') {
-          basePrice = 12000;
-          desc = "Signal Direction (Strategy Retainer: Brand positioning roadmap, monthly keywords, SEO content briefs)";
-          timeline = "Monthly Retainer";
-        } else if (tier === 'command') {
-          basePrice = 30000;
-          desc = "Signal Command (Execution Retainer: Copywriting for 3 social posts/week, 2 SEO blog posts/mo, scheduling & analytics)";
-          timeline = "Monthly Retainer";
-        } else if (tier === 'blueprint_content') {
-          basePrice = 18000;
-          desc = "Custom Content Architecture (One-off blueprint detailing niche keywords, competitor audits, and content frameworks)";
-          timeline = "2 Weeks";
-        }
-      }
+      let basePrice = currentCustomPrice;
+      let desc = `${activePractice.charAt(0).toUpperCase() + activePractice.slice(1)}: ${currentSelectedTier.name} (${currentSelectedTier.desc})`;
+      let timeline = currentSelectedTier.timeline;
 
       // Addons calculations
       let addonPrice = 0;
@@ -5769,10 +6092,36 @@ PAYMENT SCHEDULE & MILESTONES:
       { id: "tool_higgsfield", name: "Higgsfield", cost: 4424, cycle: "Monthly", status: "Paying", decision: "Approved", category: "Design/Creative", usage: "Both", checked: true }
     ];
 
+    function saveToolsToCache() {
+      localStorage.setItem('bureau_ai_tools_custom', JSON.stringify(aiToolsAudited));
+    }
+
+    function loadToolsFromCache() {
+      const saved = localStorage.getItem('bureau_ai_tools_custom');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          aiToolsAudited.length = 0;
+          aiToolsAudited.push(...parsed);
+        } catch(e) {
+          console.error("Failed to parse cached tools", e);
+        }
+      }
+    }
+
+    function resetToolsToDefaults() {
+      if (confirm("Are you sure you want to reset all tools and pricing overrides back to defaults?")) {
+        localStorage.removeItem('bureau_ai_tools_custom');
+        location.reload();
+      }
+    }
+
     function renderTools() {
       const approvedGrid = document.getElementById('approvedToolsGrid');
       const shortlistGrid = document.getElementById('shortlistToolsGrid');
       const freeGrid = document.getElementById('freeToolsGrid');
+
+      if (!approvedGrid || !shortlistGrid || !freeGrid) return;
 
       approvedGrid.innerHTML = '';
       shortlistGrid.innerHTML = '';
@@ -5794,13 +6143,22 @@ PAYMENT SCHEDULE & MILESTONES:
               <h5>${tool.name}</h5>
               <span class="status-badge ${badgeClass}">${tool.decision}</span>
             </div>
-            <div class="tool-cost">₹${tool.cost.toLocaleString('en-IN')}</div>
+            <div class="tool-cost" onclick="event.stopPropagation();">
+              <span>₹</span>
+              <input type="number" 
+                     class="tool-cost-input" 
+                     value="${tool.cost}" 
+                     min="0" 
+                     oninput="updateToolCost('${tool.id}', this.value)"
+                     onclick="event.stopPropagation();"
+              >
+            </div>
           </div>
         `;
 
-        if (tool.cost === 0 || tool.status.includes('Free') || tool.status.includes('Sponsored')) {
+        if (['tool_google_credits', 'tool_google_pro', 'tool_notion_biz', 'tool_apify'].includes(tool.id)) {
           freeGrid.insertAdjacentHTML('beforeend', cardHtml);
-        } else if (tool.decision === 'Approved' || tool.decision === 'Subscribed') {
+        } else if (tool.decision === 'Approved' || tool.decision === 'Subscribed' || tool.id.startsWith('custom_')) {
           approvedGrid.insertAdjacentHTML('beforeend', cardHtml);
         } else {
           shortlistGrid.insertAdjacentHTML('beforeend', cardHtml);
@@ -5817,15 +6175,27 @@ PAYMENT SCHEDULE & MILESTONES:
       const card = document.querySelector(`[data-tool-id="${toolId}"]`);
       const checkbox = document.getElementById(`check_${toolId}`);
       
-      if (tool.checked) {
-        card.classList.add('checked');
-        checkbox.checked = true;
-      } else {
-        card.classList.remove('checked');
-        checkbox.checked = false;
+      if (card && checkbox) {
+        if (tool.checked) {
+          card.classList.add('checked');
+          checkbox.checked = true;
+        } else {
+          card.classList.remove('checked');
+          checkbox.checked = false;
+        }
       }
 
+      saveToolsToCache();
       calculateProfitability();
+    }
+
+    function updateToolCost(toolId, value) {
+      const tool = aiToolsAudited.find(t => t.id === toolId);
+      if (tool) {
+        tool.cost = parseInt(value) || 0;
+        saveToolsToCache();
+        calculateProfitability();
+      }
     }
 
     function addCustomTool() {
@@ -5854,6 +6224,7 @@ PAYMENT SCHEDULE & MILESTONES:
       };
 
       aiToolsAudited.push(newTool);
+      saveToolsToCache();
       renderTools();
       calculateProfitability();
 
@@ -5877,20 +6248,44 @@ PAYMENT SCHEDULE & MILESTONES:
           tool.checked = false;
         }
       });
+      saveToolsToCache();
       renderTools();
       calculateProfitability();
     }
 
+    function updateExpenseFromSlider(expName, val) {
+      document.getElementById('input_exp_' + expName).value = parseInt(val) || 0;
+      updateOtherExpenses();
+    }
+
+    function updateExpenseFromInput(expName, val) {
+      const numVal = parseInt(val) || 0;
+      const slider = document.getElementById('exp_' + expName);
+      if (slider) {
+        slider.value = Math.min(slider.max, Math.max(slider.min, numVal));
+      }
+      updateOtherExpenses();
+    }
+
+    function updateReservesFromSlider(val) {
+      document.getElementById('input_bank_reserve').value = parseInt(val) || 0;
+      calculateRunway();
+    }
+
+    function updateReservesFromInput(val) {
+      const numVal = parseInt(val) || 0;
+      const slider = document.getElementById('bank_reserve_input');
+      if (slider) {
+        slider.value = Math.min(slider.max, Math.max(slider.min, numVal));
+      }
+      calculateRunway();
+    }
+
     function updateOtherExpenses() {
-      const rent = parseInt(document.getElementById('exp_rent').value) || 0;
-      const net = parseInt(document.getElementById('exp_net').value) || 0;
-      const tax = parseInt(document.getElementById('exp_tax').value) || 0;
-      const mkt = parseInt(document.getElementById('exp_mkt').value) || 0;
-      
-      document.getElementById('label_exp_rent').textContent = '₹' + rent.toLocaleString('en-IN');
-      document.getElementById('label_exp_net').textContent = '₹' + net.toLocaleString('en-IN');
-      document.getElementById('label_exp_tax').textContent = '₹' + tax.toLocaleString('en-IN');
-      document.getElementById('label_exp_mkt').textContent = '₹' + mkt.toLocaleString('en-IN');
+      const rent = parseInt(document.getElementById('input_exp_rent').value) || 0;
+      const net = parseInt(document.getElementById('input_exp_net').value) || 0;
+      const tax = parseInt(document.getElementById('input_exp_tax').value) || 0;
+      const mkt = parseInt(document.getElementById('input_exp_mkt').value) || 0;
       
       const total = rent + net + tax + mkt;
       document.getElementById('otherExpensesInput').value = total;
@@ -5927,36 +6322,37 @@ PAYMENT SCHEDULE & MILESTONES:
       const gaugeFill = document.getElementById('profitMarginGauge');
       const gaugeLabel = document.getElementById('profitMarginLabel');
       
-      // Clamp gauge width between 0 and 100
-      const displayMargin = Math.max(0, Math.min(100, profitMargin));
-      gaugeFill.style.width = displayMargin + '%';
-      gaugeLabel.textContent = profitMargin + '%';
+      if (gaugeFill && gaugeLabel) {
+        // Clamp gauge width between 0 and 100
+        const displayMargin = Math.max(0, Math.min(100, profitMargin));
+        gaugeFill.style.width = displayMargin + '%';
+        gaugeLabel.textContent = profitMargin + '%';
 
-      // Update Gauge Color and Alfred advice based on profitability tier
-      let advice = '';
-      if (profitMargin >= 65) {
-        gaugeFill.style.backgroundColor = '#00e676'; // Emerald Green
-        advice = `"Operational leverage is outstanding. At a ${profitMargin}% margin, your subscriptions act as highly efficient force-multipliers. Keep system overhead under control and scale client acquisition."`;
-      } else if (profitMargin >= 40) {
-        gaugeFill.style.backgroundColor = '#ffb74d'; // Gold/Orange
-        advice = `"A healthy ${profitMargin}% margin. Your business covers overhead smoothly, but consider checking if all shortlisted tools are contributing directly to client billing or operations. Keep an eye on expenses."`;
-      } else {
-        gaugeFill.style.backgroundColor = '#ff2d2d'; // Crimson Red
-        advice = `"Warning: Profit margin has dropped to ${profitMargin}%. Subscriptions and other expenses consume too much of your target revenue. I recommend consolidating duplicate tools (e.g., check design tools list) or increasing your target project pricing."`;
+        // Update Gauge Color and Alfred advice based on profitability tier
+        let advice = '';
+        if (profitMargin >= 65) {
+          gaugeFill.style.backgroundColor = '#00e676'; // Emerald Green
+          advice = `"Operational leverage is outstanding. At a ${profitMargin}% margin, your subscriptions act as highly efficient force-multipliers. Keep system overhead under control and scale client acquisition."`;
+        } else if (profitMargin >= 40) {
+          gaugeFill.style.backgroundColor = '#ffb74d'; // Gold/Orange
+          advice = `"A healthy ${profitMargin}% margin. Your business covers overhead smoothly, but consider checking if all shortlisted tools are contributing directly to client billing or operations. Keep an eye on expenses."`;
+        } else {
+          gaugeFill.style.backgroundColor = '#ff2d2d'; // Crimson Red
+          advice = `"Warning: Profit margin has dropped to ${profitMargin}%. Subscriptions and other expenses consume too much of your target revenue. I recommend consolidating duplicate tools (e.g., check design tools list) or increasing your target project pricing."`;
+        }
+        
+        document.getElementById('alfredFinancialAdvice').textContent = advice;
       }
-      
-      document.getElementById('alfredFinancialAdvice').textContent = advice;
 
       // Dynamic runway calculation update
       calculateRunway();
     }
 
     function calculateRunway() {
-      const bankReserveEl = document.getElementById('bank_reserve_input');
+      const bankReserveEl = document.getElementById('input_bank_reserve');
       if (!bankReserveEl) return;
       
       const reserve = parseInt(bankReserveEl.value) || 0;
-      document.getElementById('label_bank_reserve').textContent = '₹' + reserve.toLocaleString('en-IN');
       if (document.getElementById('modelReservesDisplay')) {
         document.getElementById('modelReservesDisplay').textContent = '₹' + reserve.toLocaleString('en-IN');
       }
