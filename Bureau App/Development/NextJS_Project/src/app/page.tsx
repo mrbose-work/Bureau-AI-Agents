@@ -1,272 +1,87 @@
-"use client";
-
-import { useState, useRef, useEffect, useCallback } from 'react';
-
-type Message = {
-  role: 'user' | 'assistant';
-  content: string;
-  agent?: 'Benjamin' | 'Bella';
-};
+'use client';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isListening, setIsListening] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeAgent, setActiveAgent] = useState<'Benjamin' | 'Bella' | 'System'>('System');
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  
-  // Web Speech API
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-
-  const handleSend = useCallback(async (text: string = input) => {
-    if (!text.trim()) return;
-
-    setMessages(prev => [...prev, { role: 'user', content: text }]);
-    setInput('');
-    setIsLoading(true);
-
-    try {
-      const history = messages.map(m => ({ role: m.role, content: m.content }));
-      
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, history })
-      });
-      
-      const data = await res.json();
-      
-      if (data.error) throw new Error(data.error);
-      
-      setActiveAgent(data.agent);
-      
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: data.response,
-        agent: data.agent
-      }]);
-      
-    } catch (error) {
-      console.error("Error sending message:", error);
-      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I encountered an error. Please check your API keys." }]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [input, messages]);
-
-  // Separate speak function to avoid dependency loop
-  const speakResponse = useCallback((text: string, agent: string) => {
-    if (!('speechSynthesis' in window)) return;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    let voice;
-    if (agent === 'Benjamin') {
-      voice = voices.find(v => v.name.includes('Google US English') || v.name.includes('David') || v.name.includes('Male'));
-    } else if (agent === 'Bella') {
-      voice = voices.find(v => v.name.includes('Google UK English Female') || v.name.includes('Zira') || v.name.includes('Female'));
-    }
-    
-    if (voice) {
-      utterance.voice = voice;
-    }
-    
-    if (agent === 'Benjamin') {
-      utterance.pitch = 0.9;
-      utterance.rate = 1.0;
-    } else if (agent === 'Bella') {
-      utterance.pitch = 1.1;
-      utterance.rate = 0.95;
-    }
-
-    window.speechSynthesis.speak(utterance);
-  }, [voices]);
-
-  // Hook to speak when messages change
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage && lastMessage.role === 'assistant' && lastMessage.agent) {
-      speakResponse(lastMessage.content, lastMessage.agent);
-    }
-  }, [messages, speakResponse]);
+  const [briefingText, setBriefingText] = useState('');
+  const fullBriefing = "Good morning, Mr. Bose. A busy day ahead. You have 2 urgent escalations pending, and Company A's project is due this Friday. Your cash flow looks excellent at ₹1.2L for the month. Shall we begin with the escalations?";
 
   useEffect(() => {
-    // Initialize speech recognition
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-US';
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recognitionRef.current.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInput(transcript);
-        handleSend(transcript);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-      
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recognitionRef.current.onerror = (event: any) => {
-        console.error("Speech recognition error", event.error);
-        setIsListening(false);
-      };
-    }
-
-    // Load voices
-    const loadVoices = () => {
-      setVoices(window.speechSynthesis.getVoices());
-    };
-    loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-  }, [handleSend]);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    
-    if (activeAgent === 'Benjamin') {
-      document.documentElement.style.setProperty('--agent-color-current', 'var(--benjamin-color)');
-    } else if (activeAgent === 'Bella') {
-      document.documentElement.style.setProperty('--agent-color-current', 'var(--bella-color)');
-    } else {
-      document.documentElement.style.setProperty('--agent-color-current', 'var(--text-color)');
-    }
-  }, [messages, activeAgent]);
-
-  const toggleListening = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-    } else {
-      setInput('');
-      recognitionRef.current?.start();
-      setIsListening(true);
-    }
-  };
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < fullBriefing.length) {
+        setBriefingText(fullBriefing.substring(0, i + 1));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 30);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <main style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      height: '100vh',
-      maxWidth: '800px',
-      margin: '0 auto',
-      padding: '24px'
-    }}>
-      
-      <header style={{ textAlign: 'center', marginBottom: '24px' }}>
-        <h1 style={{ 
-          fontSize: '2.5rem', 
-          fontWeight: 700, 
-          letterSpacing: '-1px',
-          color: activeAgent === 'System' ? 'var(--text-color)' : `var(--${activeAgent.toLowerCase()}-color)`,
-          transition: 'color 0.5s ease'
-        }}>
-          Bureau OS
-        </h1>
-        <p style={{ opacity: 0.6, fontSize: '0.9rem' }}>
-          {activeAgent === 'System' ? 'Awaiting Input...' : `Currently Active: ${activeAgent}`}
-        </p>
-      </header>
+    <div className="screen on" id="s-home">
+      <div className="briefing">
+        <div className="bby">✦ BENJAMIN</div>
+        <div className="btxt">{briefingText}</div>
+        <button className="rpbtn">↺ Replay Briefing</button>
+      </div>
 
-      <div className="glass-panel" style={{ 
-        flex: 1, 
-        overflowY: 'auto', 
-        padding: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        marginBottom: '24px'
-      }}>
-        {messages.length === 0 ? (
-          <div style={{ margin: 'auto', textAlign: 'center', opacity: 0.5 }}>
-            <p>Welcome to the Bureau.</p>
-            <p style={{ fontSize: '0.8rem', marginTop: '8px' }}>Speak or type to begin.</p>
-          </div>
-        ) : (
-          messages.map((msg, idx) => (
-            <div key={idx} style={{
-              alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-              maxWidth: '80%',
-              padding: '12px 16px',
-              borderRadius: '12px',
-              backgroundColor: msg.role === 'user' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.4)',
-              borderLeft: msg.role === 'assistant' ? `4px solid var(--${msg.agent?.toLowerCase()}-color)` : 'none',
-              borderRight: msg.role === 'user' ? `4px solid rgba(255,255,255,0.3)` : 'none',
-            }}>
-              {msg.role === 'assistant' && (
-                <div style={{ 
-                  fontSize: '0.75rem', 
-                  opacity: 0.6, 
-                  marginBottom: '4px',
-                  color: `var(--${msg.agent?.toLowerCase()}-color)`,
-                  fontWeight: 600
-                }}>
-                  {msg.agent}
-                </div>
-              )}
-              <div style={{ lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
-                {msg.content}
+      <div className="fcard">
+        <div className="flbl">Today's Focus</div>
+        <div className="ftxt">"Review Company A campaign assets — P1 · Due Friday"</div>
+      </div>
+
+      <div className="qa">
+        <div className="qab"><span>✏️</span>New Task</div>
+        <div className="qab"><span>📄</span>New Invoice</div>
+        <div className="qab"><span>💬</span>New Message</div>
+        <div className="qab"><span>📅</span>New Meeting</div>
+        <div className="qab"><span>💸</span>Log Expense</div>
+      </div>
+
+      <div className="bento">
+        {/* Bento Grid Items */}
+        <div className="ecard bw">
+          <div className="ecard-in">
+            <div className="slabel">Inbox Summary</div>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
+              <div>
+                <div className="snum cu">7</div>
+                <div className="ssub">unread messages</div>
+              </div>
+              <div style={{textAlign: 'right'}}>
+                <div style={{fontSize: '11px', color: 'var(--red)', marginBottom: '7px', fontWeight: 500}}>2 escalated 🔴</div>
               </div>
             </div>
-          ))
-        )}
-        {isLoading && (
-          <div style={{ alignSelf: 'flex-start', opacity: 0.5 }}>
-            Thinking...
           </div>
-        )}
-        <div ref={chatEndRef} />
-      </div>
+        </div>
 
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <button 
-          onClick={toggleListening}
-          className="btn"
-          style={{ 
-            padding: '12px', 
-            borderRadius: '50%', 
-            width: '48px', 
-            height: '48px',
-            borderColor: isListening ? '#ff3366' : ''
-          }}
-          title="Voice Input"
-        >
-          {isListening ? (
-            <div className="listening-indicator" />
-          ) : (
-            <span style={{ fontSize: '1.2rem' }}>🎤</span>
-          )}
-        </button>
-        
-        <input 
-          type="text"
-          className="glass-input"
-          style={{ flex: 1 }}
-          placeholder="Type your request here..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleSend();
-          }}
-        />
-        
-        <button 
-          className="btn btn-primary"
-          onClick={() => handleSend()}
-          disabled={!input.trim() || isLoading}
-        >
-          Send ↗
-        </button>
-      </div>
+        <div className="ecard">
+          <div className="ecard-in">
+            <div className="slabel">Bureau Health</div>
+            <div className="hring"><div className="hnum">78</div></div>
+            <div style={{fontSize: '10px', color: 'var(--green)', fontWeight: 500, textAlign: 'center'}}>Good standing</div>
+          </div>
+        </div>
 
-    </main>
+        <div className="ecard">
+          <div className="ecard-in">
+            <div className="slabel">Today's Revenue</div>
+            <div className="ctick">₹<span className="cu">45,000</span></div>
+            <div style={{fontSize: '11px', color: 'var(--ts)', marginTop: '3px'}}>INV-003 received</div>
+          </div>
+        </div>
+
+        {/* More cards can be extracted into individual components later */}
+        <div className="ecard urg">
+          <div className="ecard-in">
+            <div className="slabel" style={{color: 'var(--red)'}}>Escalations 🔴</div>
+            <div style={{fontFamily: 'var(--serif)', fontSize: '29px', color: 'var(--red)', fontWeight: 600}}>1</div>
+            <div style={{fontSize: '11px', color: 'var(--ts)', marginTop: '5px'}}>Company A — urgent</div>
+            <button className="bg bgsm" style={{marginTop: '9px', background: 'rgba(255,75,75,0.1)', borderColor: 'rgba(255,75,75,0.3)', color: 'var(--red)'}}>Handle Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
