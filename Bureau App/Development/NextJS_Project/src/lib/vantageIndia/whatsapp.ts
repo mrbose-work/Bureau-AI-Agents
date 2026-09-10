@@ -127,6 +127,16 @@ export async function sendGroupMessage(groupId: string, text: string) {
   await sockInstance.sendMessage(groupId, { text });
 }
 
+// For previewing a draft on a personal number before it goes to the group.
+// Accepts a plain phone number (with or without country code, digits only).
+export async function sendDirectMessage(phone: string, text: string) {
+  if (!sockInstance) throw new Error('WhatsApp socket not started yet.');
+  const digits = phone.replace(/\D/g, '');
+  const withCountryCode = digits.length === 10 ? `91${digits}` : digits; // default to India
+  const jid = `${withCountryCode}@s.whatsapp.net`;
+  await sockInstance.sendMessage(jid, { text });
+}
+
 export async function listJoinedGroups() {
   if (!sockInstance) throw new Error('WhatsApp socket not started yet.');
   const groups = await sockInstance.groupFetchAllParticipating();
